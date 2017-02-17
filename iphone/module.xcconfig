@@ -8,4 +8,4 @@
 //
 FRAMEWORK_SEARCH_PATHS=$(SRCROOT)/../../modules/iphone/ti.googlesignin/1.0.0/platform "~/Library/Application\ Support/Titanium/modules/iphone/ti.googlesignin/1.0.0/platform"
 
-OTHER_LDFLAGS = $(inherited) -framework GoogleAppUtilities -framework GoogleSignIn -framework GoogleSignInDependencies -framework GoogleSymbolUtilities
+OTHER_LDFLAGS = $(inherited) -framework SafariServices -framework GoogleAppUtilities -framework GoogleSignIn -framework GoogleSignInDependencies -framework GoogleSymbolUtilities
