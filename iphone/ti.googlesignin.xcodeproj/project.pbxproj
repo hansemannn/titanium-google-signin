@@ -57,6 +57,7 @@
 		AA747D9E0F9514B9006C5449 /* TiGooglesignin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiGooglesignin_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libti.googlesignin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libti.googlesignin.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB4075BA1E578F8900CCAD70 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleSignIn.bundle; path = Resources/GoogleSignIn.bundle; sourceTree = "<group>"; };
 		DB61E7C11E575D15007A3734 /* GoogleAppUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleAppUtilities.framework; path = platform/GoogleAppUtilities.framework; sourceTree = "<group>"; };
 		DB61E7C21E575D15007A3734 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignIn.framework; path = platform/GoogleSignIn.framework; sourceTree = "<group>"; };
 		DB61E7C31E575D15007A3734 /* GoogleSignInDependencies.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignInDependencies.framework; path = platform/GoogleSignInDependencies.framework; sourceTree = "<group>"; };
@@ -129,6 +130,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				DB4075BA1E578F8900CCAD70 /* GoogleSignIn.bundle */,
 				AA747D9E0F9514B9006C5449 /* TiGooglesignin_Prefix.pch */,
 				24DD6D1B1134B66800162E58 /* titanium.xcconfig */,
 			);
