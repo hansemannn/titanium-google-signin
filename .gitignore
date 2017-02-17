@@ -1,0 +1,23 @@
+.DS_Store
+iphone/build/
+iphone/DerivedData/
+
+**/.DS_Store
+
+## Various settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+iphone/xcuserdata/
+
+## Other
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+/iphone/metadata.json
+iphone/ti.googlesignin.xcodeproj/project.xcworkspace/xcuserdata/
