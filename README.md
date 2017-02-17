@@ -34,6 +34,23 @@ Google.initialize({
     clientId: '<client-id>'
 });
 ```
+#### Methods
+- [x] `signIn`
+- [x] `signInSilently`
+- [x] `signOut`
+- [x] `disconnect`
+
+#### Events
+- [x] `login`
+- [x] `disconnect`
+- [x] `load`
+- [x] `open`
+- [x] `close`
+
+The `login`- and `disconnect` events include a `user` key that includes the following user-infos:
+```
+id, scopes, serverAuthCode, hostedDomain, profile, authentication
+```
 
 ### Build
 If you want to build the module from the source, you need to check some things beforehand:
