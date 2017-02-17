@@ -7,12 +7,12 @@ apiversion: 2
 architectures: armv7 arm64 i386 x86_64
 description: ti.googlesignin
 author: Hans Knoechel
-license: Specify your license
-copyright: Copyright (c) 2017 by Your Company
+license: Apache 2
+copyright: Copyright (c) 2017 by Hans Knoechel
 
 # these should not be edited
 name: ti.googlesignin
 moduleid: ti.googlesignin
 guid: 7fa817c2-5c36-402b-a442-f2cafd41da64
 platform: iphone
-minsdk: 6.0.1.GA
+minsdk: 5.5.1.GA
