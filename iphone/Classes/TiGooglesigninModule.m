@@ -9,6 +9,7 @@
 #import "TiBase.h"
 #import "TiHost.h"
 #import "TiUtils.h"
+#import "TiApp.h"
 
 @implementation TiGooglesigninModule
 
@@ -33,24 +34,63 @@
 	NSLog(@"[DEBUG] %@ loaded",self);
 }
 
+-(void)handleOpenURL:(NSNotification *)notification
+{
+    NSDictionary *launchOptions = [[TiApp app] launchOptions];
+    NSString *urlString = [launchOptions objectForKey:@"url"];
+    NSString *sourceApplication = [launchOptions objectForKey:@"source"];
+    id annotation = nil;
+    
+    if ([TiUtils isIOS9OrGreater]) {
+#ifdef __IPHONE_9_0
+        annotation = [launchOptions objectForKey:UIApplicationOpenURLOptionsAnnotationKey];
+#endif
+    }
+    
+    if (urlString != nil) {
+        [[GIDSignIn sharedInstance] handleURL:[NSURL URLWithString:urlString]
+                            sourceApplication:sourceApplication
+                                   annotation:annotation];
+    }
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"TiApplicationLaunchedFromURL"
+                                                  object:nil];
+}
+
 #pragma Public APIs
 
 -(void)initialize:(id)args
 {
     ENSURE_SINGLE_ARG(args, NSDictionary);
     
-    id scopes = [args objectForKey:@"scopes"];
     id clientID = [args objectForKey:@"clientID"];
+    id scopes = [args objectForKey:@"scopes"];
+    id language = [args objectForKey:@"language"];
+    id loginHint = [args objectForKey:@"loginHint"];
+    id hostedDomain = [args objectForKey:@"hostedDomain"];
     
-    ENSURE_TYPE_OR_NIL(scopes, NSArray);
     ENSURE_TYPE(clientID, NSString);
+    ENSURE_TYPE_OR_NIL(scopes, NSArray);
+    ENSURE_TYPE_OR_NIL(language, NSString);
+    ENSURE_TYPE_OR_NIL(loginHint, NSString);
+    ENSURE_TYPE_OR_NIL(hostedDomain, NSString);
     
-    [[GIDSignIn sharedInstance] setScopes:scopes];
-    [[GIDSignIn sharedInstance] setClientID:clientID];
-    
-    // TODO: Expose all other shared instance properties
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleOpenURL:)
+                                                 name:@"TiApplicationLaunchedFromURL" object:nil];
+
     
     [[GIDSignIn sharedInstance] setDelegate:self];
+
+    [[GIDSignIn sharedInstance] setScopes:scopes];
+    [[GIDSignIn sharedInstance] setClientID:clientID];
+    [[GIDSignIn sharedInstance] setLanguage:language];
+    [[GIDSignIn sharedInstance] setLoginHint:loginHint];
+    [[GIDSignIn sharedInstance] setHostedDomain:hostedDomain];
 }
 
 -(void)signIn:(id)unused
@@ -111,15 +151,31 @@
     }
 }
 
-#pragma mark Helper
+#pragma mark Utilities
 
 + (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user
 {
-    // TODO: Expose all
     return @{
         @"id": user.userID,
         @"scopes": user.accessibleScopes,
-        @"serverAuthCode": user.serverAuthCode
+        @"serverAuthCode": user.serverAuthCode,
+        @"hostedDomain": user.hostedDomain,
+        @"profile": @{
+            @"name": user.profile.name,
+            @"givenName": user.profile.givenName,
+            @"familyName": user.profile.familyName,
+            @"email": user.profile.email,
+            @"hasImage": NUMBOOL(user.profile.hasImage),
+        },
+        @"authentication": @{
+            @"clientID": user.authentication.clientID,
+            @"accessToken": user.authentication.accessToken,
+            @"clientID": user.authentication.clientID,
+            @"accessTokenExpirationDate": user.authentication.accessTokenExpirationDate,
+            @"refreshToken": user.authentication.refreshToken,
+            @"idToken": user.authentication.idToken,
+            @"idTokenExpirationDate": user.authentication.idTokenExpirationDate,
+        }
     };
 }
 
