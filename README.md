@@ -26,6 +26,23 @@ Edit the modules section of your `tiapp.xml` file to include this module:
     <module platform="iphone">ti.googlesignin</module>
 </modules>
 ```
+Add the following URL types to your plist section of the tiapp.xml:
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>google</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <!-- Example: com.googleusercontent.apps.123456789-xxxxxxxx -->
+            <string>YOUR_REVERSE_CLIENT_ID</string>
+        </array>
+    </dict>
+</array>
+```
 
 Initialize the module by setting the Google SignIn API key you can get from the Google API Console.
 ```javascript

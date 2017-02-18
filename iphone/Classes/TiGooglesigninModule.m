@@ -83,14 +83,26 @@
                                              selector:@selector(handleOpenURL:)
                                                  name:@"TiApplicationLaunchedFromURL" object:nil];
 
-    
     [[GIDSignIn sharedInstance] setDelegate:self];
+    [[GIDSignIn sharedInstance] setUiDelegate:self];
 
-    [[GIDSignIn sharedInstance] setScopes:scopes];
     [[GIDSignIn sharedInstance] setClientID:clientID];
-    [[GIDSignIn sharedInstance] setLanguage:language];
-    [[GIDSignIn sharedInstance] setLoginHint:loginHint];
-    [[GIDSignIn sharedInstance] setHostedDomain:hostedDomain];
+    
+    if (scopes != nil) {
+        [[GIDSignIn sharedInstance] setScopes:scopes];
+    }
+
+    if (language != nil) {
+        [[GIDSignIn sharedInstance] setLanguage:language];
+    }
+    
+    if (loginHint != nil) {
+        [[GIDSignIn sharedInstance] setLoginHint:loginHint];
+    }
+    
+    if (hostedDomain != nil) {
+        [[GIDSignIn sharedInstance] setHostedDomain:hostedDomain];
+    }
 }
 
 -(void)signIn:(id)unused
@@ -131,6 +143,8 @@
 
 - (void)signIn:(GIDSignIn *)signIn presentViewController:(UIViewController *)viewController
 {
+    [[TiApp app] showModalController:viewController animated:YES];
+    
     if ([self _hasListeners:@"open"]) {
         [self fireEvent:@"open"];
     }
@@ -138,6 +152,8 @@
 
 - (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController
 {
+    [[TiApp app] hideModalController:viewController animated:YES];
+
     if ([self _hasListeners:@"close"]) {
         [self fireEvent:@"close"];
     }
