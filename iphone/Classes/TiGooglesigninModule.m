@@ -11,30 +11,36 @@
 #import "TiUtils.h"
 #import "TiApp.h"
 
+#define ENSURE_LOGGED_IN \
+if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
+    NSLog(@"[WARN] No user infos found. Check with \"hasAuthInKeychain()\" before."); \
+    return nil; \
+} \
+
 @implementation TiGooglesigninModule
 
 #pragma mark Internal
 
--(id)moduleGUID
+- (id)moduleGUID
 {
 	return @"7fa817c2-5c36-402b-a442-f2cafd41da64";
 }
 
--(NSString*)moduleId
+- (NSString*)moduleId
 {
 	return @"ti.googlesignin";
 }
 
 #pragma mark Lifecycle
 
--(void)startup
+- (void)startup
 {
 	[super startup];
 
 	NSLog(@"[DEBUG] %@ loaded",self);
 }
 
--(void)handleOpenURL:(NSNotification *)notification
+- (void)handleOpenURL:(NSNotification *)notification
 {
     NSDictionary *launchOptions = [[TiApp app] launchOptions];
     NSString *urlString = [launchOptions objectForKey:@"url"];
@@ -63,7 +69,7 @@
 
 #pragma Public APIs
 
--(void)initialize:(id)args
+- (void)initialize:(id)args
 {
     ENSURE_SINGLE_ARG(args, NSDictionary);
     
@@ -72,12 +78,23 @@
     id language = [args objectForKey:@"language"];
     id loginHint = [args objectForKey:@"loginHint"];
     id hostedDomain = [args objectForKey:@"hostedDomain"];
+    id serverClientID = [args objectForKey:@"serverClientID"];
+    id shouldFetchBasicProfile = [args objectForKey:@"shouldFetchBasicProfile"];
+    id openIDRealm = [args objectForKey:@"openIDRealm"];
+    
+    if (!clientID) {
+        NSLog(@"[ERROR] The \"clientID\" property is required when initializing Google Sign In.");
+        return;
+    }
     
     ENSURE_TYPE(clientID, NSString);
     ENSURE_TYPE_OR_NIL(scopes, NSArray);
     ENSURE_TYPE_OR_NIL(language, NSString);
     ENSURE_TYPE_OR_NIL(loginHint, NSString);
     ENSURE_TYPE_OR_NIL(hostedDomain, NSString);
+    ENSURE_TYPE_OR_NIL(serverClientID, NSString);
+    ENSURE_TYPE_OR_NIL(shouldFetchBasicProfile, NSNumber);
+    ENSURE_TYPE_OR_NIL(openIDRealm, NSString);
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleOpenURL:)
@@ -103,26 +120,57 @@
     if (hostedDomain != nil) {
         [[GIDSignIn sharedInstance] setHostedDomain:hostedDomain];
     }
+    
+    if (shouldFetchBasicProfile != nil) {
+        [[GIDSignIn sharedInstance] setShouldFetchBasicProfile:[TiUtils boolValue:shouldFetchBasicProfile def:YES]];
+    }
+    
+    if (serverClientID != nil) {
+        [[GIDSignIn sharedInstance] setServerClientID:serverClientID];
+    }
+
+    if (openIDRealm != nil) {
+        [[GIDSignIn sharedInstance] setOpenIDRealm:openIDRealm];
+    }
 }
 
--(void)signIn:(id)unused
+- (void)signIn:(id)unused
 {
     [[GIDSignIn sharedInstance] signIn];
 }
 
--(void)signInSilently:(id)unused
+- (void)signInSilently:(id)unused
 {
     [[GIDSignIn sharedInstance] signInSilently];
 }
 
--(void)signOut:(id)unused
+- (void)signOut:(id)unused
 {
     [[GIDSignIn sharedInstance] signOut];
 }
 
--(void)disconnect:(id)unused
+- (void)disconnect:(id)unused
 {
     [[GIDSignIn sharedInstance] disconnect];
+}
+
+- (id)hasAuthInKeychain:(id)unused
+{
+    return NUMBOOL([[GIDSignIn sharedInstance] hasAuthInKeychain]);
+}
+
+- (id)currentUser
+{
+    ENSURE_LOGGED_IN
+    return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser]];
+}
+
+- (id)currentUserImageURLWithSize:(id)size
+{
+    ENSURE_LOGGED_IN
+    ENSURE_TYPE(size, NSNumber);
+    
+    return [[[[[GIDSignIn sharedInstance] currentUser] profile] imageURLWithDimension:[TiUtils intValue:size]] absoluteString];
 }
 
 #pragma mark Delegates
@@ -162,7 +210,8 @@
 - (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error
 {
     if ([self _hasListeners:@"load"]) {
-        [self fireEvent:@"load"];
+        NSDictionary *event = error ? @{@"error": [error localizedDescription]} : nil;
+        [self fireEvent:@"load" withObject:event];
     }
 }
 
@@ -173,8 +222,8 @@
     return @{
         @"id": user.userID,
         @"scopes": user.accessibleScopes,
-        @"serverAuthCode": user.serverAuthCode,
-        @"hostedDomain": user.hostedDomain,
+        @"serverAuthCode": user.serverAuthCode ?: [NSNull null],
+        @"hostedDomain": user.hostedDomain ?: [NSNull null],
         @"profile": @{
             @"name": user.profile.name,
             @"givenName": user.profile.givenName,

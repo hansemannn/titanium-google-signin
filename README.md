@@ -48,7 +48,16 @@ Initialize the module by setting the Google SignIn API key you can get from the 
 ```javascript
 var Google = require('ti.googlesignin');
 Google.initialize({
-    clientId: '<client-id>'
+    clientId: '<client-id>',
+
+    // Optional properties:
+    serverClientId: '<server-client-id>',
+    scopes: ['https://www.googleapis.com/auth/plus.login'], // See https://developers.google.com/identity/protocols/googlescopes for more
+    language: 'de', // Or 'de-DE', 'en-US', etc.
+    loginHint: 'Titanium rocks!',
+    hostedDomain: 'https://my-hosted-domain.com',
+    shouldFetchBasicProfile: false, // Default: true
+    openIDRealm: 'my-openID-realm',
 });
 ```
 #### Methods
@@ -56,6 +65,11 @@ Google.initialize({
 - [x] `signInSilently`
 - [x] `signOut`
 - [x] `disconnect`
+- [x] `hasAuthInKeychain`
+- [x] `currentUserImageURLWithSize`
+
+#### Properties
+- [x] `currentUser`
 
 #### Events
 - [x] `login`
