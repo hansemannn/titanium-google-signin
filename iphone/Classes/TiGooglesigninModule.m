@@ -159,7 +159,6 @@
     }
 }
 
-
 - (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error
 {
     if ([self _hasListeners:@"load"]) {
