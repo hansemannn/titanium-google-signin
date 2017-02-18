@@ -1,28 +1,35 @@
 var Google = require('ti.googlesignin');
 
+Google.initialize({
+   clientID: '123456789-xxxxxx.apps.googleusercontent.com' 
+});
+
+var loggedIn = Google.hasAuthInKeychain();
+var logOutMessage = 'Sign Out';
+var logInMessage = 'Sign In with Google';
+
 var win = Ti.UI.createWindow({
     backgroundColor: '#fff'
 });
 
 var btn = Ti.UI.createButton({
-    height: 48,
-    title: "Sign In with Google",
-    width: 48
-});
-
-Google.initialize({
-    // Change with your Google Client-ID from the Google API Console
-    clientID: '123456789-xxxxxx.apps.googleusercontent.com' 
+    title: loggedIn ? logOutMessage : logInMessage,
 });
 
 Google.addEventListener('login', function(e) {
     Ti.API.info('Logged in!');
     Ti.API.info(e.user);
+    
+    loggedIn = true;
+    updateButtonState();
 });
 
 Google.addEventListener('logout', function(e) {
     Ti.API.info('Logged out!');
     Ti.API.info(e.user);
+      
+    loggedIn = false;
+    updateButtonState();
 });
 
 Google.addEventListener('load', function(e) {
@@ -38,8 +45,16 @@ Google.addEventListener('close', function(e) {
 });
 
 btn.addEventListener('click', function() {
-    Google.signIn();
+    if (loggedIn) {
+        Google.disconnect();
+    } else {
+        Google.signIn();
+    }
 });
+
+function updateButtonState() {
+    btn.setTitle(loggedIn ? logOutMessage : logInMessage)
+}
 
 win.add(btn);
 win.open();
