@@ -74,6 +74,8 @@ Google.initialize({
 #### Events
 - [x] `login`
 - [x] `disconnect`
+- [x] `cancel`
+- [x] `error`
 - [x] `load`
 - [x] `open`
 - [x] `close`
