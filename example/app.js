@@ -24,8 +24,8 @@ Google.addEventListener('login', function(e) {
     updateButtonState();
 });
 
-Google.addEventListener('logout', function(e) {
-    Ti.API.info('Logged out!');
+Google.addEventListener('disconnect', function(e) {
+    Ti.API.info('Disconnected!'); // The Google SignIn API prefers "diconnect" over "logout"
     Ti.API.info(e.user);
       
     loggedIn = false;
@@ -34,6 +34,14 @@ Google.addEventListener('logout', function(e) {
 
 Google.addEventListener('load', function(e) {
     Ti.API.info('Login UI loaded!');
+});
+
+Google.addEventListener('cancel', function(e) {
+    Ti.API.info('Login UI cancelled: ' + e.message);
+});
+
+Google.addEventListener('error', function(e) {
+    Ti.API.info('Login UI errored: ' + e.message);
 });
 
 Google.addEventListener('open', function(e) {

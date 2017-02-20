@@ -177,6 +177,17 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 
 - (void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
+    if (error != nil) {
+        if ([self _hasListeners:@"cancel"]) {
+            [self fireEvent:@"cancel" withObject:@{
+                @"message": [error localizedDescription],
+                @"code": NUMINTEGER([error code])
+            }];
+        }
+        
+        return;
+    }
+    
     if ([self _hasListeners:@"login"]) {
         [self fireEvent:@"login" withObject:@{@"user": [TiGooglesigninModule dictionaryFromUser:user]}];
     }
@@ -184,8 +195,8 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 
 - (void)signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
-    if ([self _hasListeners:@"logout"]) {
-        [self fireEvent:@"logout" withObject:@{@"user": [TiGooglesigninModule dictionaryFromUser:user]}];
+    if ([self _hasListeners:@"disconnect"]) {
+        [self fireEvent:@"disconnect" withObject:@{@"user": [TiGooglesigninModule dictionaryFromUser:user]}];
     }
 }
 
@@ -209,9 +220,19 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 
 - (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error
 {
+    if (error != nil) {
+        if ([self _hasListeners:@"error"]) {
+            [self fireEvent:@"error" withObject:@{
+                @"message": [error localizedDescription],
+                @"code": NUMINTEGER([error code])
+            }];
+        }
+        
+        return;
+    }
+    
     if ([self _hasListeners:@"load"]) {
-        NSDictionary *event = error ? @{@"error": [error localizedDescription]} : nil;
-        [self fireEvent:@"load" withObject:event];
+        [self fireEvent:@"load"];
     }
 }
 
