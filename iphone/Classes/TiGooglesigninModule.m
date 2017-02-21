@@ -168,7 +168,7 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 - (id)currentUserImageURLWithSize:(id)size
 {
     ENSURE_LOGGED_IN
-    ENSURE_TYPE(size, NSNumber);
+    ENSURE_SINGLE_ARG(size, NSNumber);
     
     return [[[[[GIDSignIn sharedInstance] currentUser] profile] imageURLWithDimension:[TiUtils intValue:size]] absoluteString];
 }
