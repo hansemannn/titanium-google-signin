@@ -99,7 +99,7 @@ If you want to build the module from the source, you need to check some things b
 TBA
 
 ### Example
-For a full example, check the demos in `example/app.js` and `example/clustering.js`.
+For a full example, check the demo in `example/app.js`.
 
 ### Author
 Hans Knoechel ([@hansemannnn](https://twitter.com/hansemannnn) / [Web](http://hans-knoechel.de))
