@@ -1,9 +1,13 @@
-# Ti.GoogleSignIn 
+# Ti.GoogleSignIn
 [![Build Status](https://travis-ci.org/hansemannn/ti.googlesignin.svg?branch=master)](https://travis-ci.org/hansemannn/ti.googlesignin) [![License](http://hans-knoechel.de/shields/shield-license.svg?v=1)](./LICENSE) [![Contact](http://hans-knoechel.de/shields/shield-twitter.svg?v=1)](http://twitter.com/hansemannnn)
 
+
+
+![demo](example/demo.gif)   
+   
  Summary
 ---------------
-Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile. 
+Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile.
 
 Requirements
 ---------------
