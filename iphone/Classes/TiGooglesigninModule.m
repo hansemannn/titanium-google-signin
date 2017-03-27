@@ -178,8 +178,8 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 - (void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
     if (error != nil) {
-        if ([self _hasListeners:@"cancel"]) {
-            [self fireEvent:@"cancel" withObject:@{
+        if ([self _hasListeners:@"error"]) {
+            [self fireEvent:@"error" withObject:@{
                 @"message": [error localizedDescription],
                 @"code": NUMINTEGER([error code])
             }];
