@@ -1,5 +1,5 @@
-# Ti.GoogleSignIn
-[![Build Status](https://travis-ci.org/hansemannn/ti.googlesignin.svg?branch=master)](https://travis-ci.org/hansemannn/ti.googlesignin) [![License](http://hans-knoechel.de/shields/shield-license.svg?v=1)](./LICENSE) [![Contact](http://hans-knoechel.de/shields/shield-twitter.svg?v=1)](http://twitter.com/hansemannnn)
+# Google SignIn iOS SDK in Appcelerator Titanium
+[![Build Status](https://travis-ci.org/hansemannn/titanium-google-signin.svg?branch=master)](https://travis-ci.org/hansemannn/titanium-google-signin) [![License](http://hans-knoechel.de/shields/shield-license.svg?v=1)](./LICENSE) [![Contact](http://hans-knoechel.de/shields/shield-twitter.svg?v=1)](http://twitter.com/hansemannnn)
 
 
 
