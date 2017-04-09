@@ -1,0 +1,3 @@
+[submodule "android"]
+	path = android
+	url = https://hansemannn@github.com/AppWerft/Ti.GoogleSignIn.git
