@@ -3,18 +3,14 @@
 
 <img src="example/demo.gif" height="300" alt="Google SignIn" />   
    
- Summary
----------------
-Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile. For the Android version of this module, check-out [AppWerft/Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn). Thanks for that!
+## Summary
+Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile. The Android version of this module is linked as a sub-module from [AppWerft/Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) in `android/`. Thanks for that!
 
-Requirements
+## Requirements
 ---------------
-  - Titanium Mobile SDK 5.5.1.GA or later
-  - iOS 7.1 or later
-  - Xcode 7.3 or later
-
-Download + Setup
----------------
+  * Titanium SDK 5.5.1.GA+
+  * iOS 7.1+
+  * Android 4.0+
 
 ### Download
   * [Stable release](https://github.com/hansemannn/Ti.GoogleSignIn/releases)
