@@ -45,10 +45,10 @@ Initialize the module by setting the Google SignIn API key you can get from the 
 ```javascript
 var Google = require('ti.googlesignin');
 Google.initialize({
-    clientId: '<client-id>',
+    clientID: '<client-id>',
 
     // Optional properties:
-    serverClientId: '<server-client-id>',
+    serverClientID: '<server-client-id>',
     scopes: ['https://www.googleapis.com/auth/plus.login'], // See https://developers.google.com/identity/protocols/googlescopes for more
     language: 'de', // Or 'de-DE', 'en-US', etc.
     loginHint: 'Titanium rocks!',
