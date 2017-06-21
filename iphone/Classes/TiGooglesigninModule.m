@@ -136,21 +136,25 @@ if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) { \
 
 - (void)signIn:(id)unused
 {
+    ENSURE_UI_THREAD(signIn, unused);
     [[GIDSignIn sharedInstance] signIn];
 }
 
 - (void)signInSilently:(id)unused
 {
+    ENSURE_UI_THREAD(signInSilently, unused);
     [[GIDSignIn sharedInstance] signInSilently];
 }
 
 - (void)signOut:(id)unused
 {
+    ENSURE_UI_THREAD(signOut, unused);
     [[GIDSignIn sharedInstance] signOut];
 }
 
 - (void)disconnect:(id)unused
 {
+    ENSURE_UI_THREAD(disconnect, unused);
     [[GIDSignIn sharedInstance] disconnect];
 }
 
