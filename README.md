@@ -84,6 +84,7 @@ id, scopes, serverAuthCode, hostedDomain, profile, authentication
 
 ### Build
 If you want to build the module from the source, you need to check some things beforehand:
+- Ensure to build the module with Titanium SDK 6.1.0 and later in order to use the new `TI_MODULE_VERSION` macro that generates the framework-search-paths
 - Set the `TITANIUM_SDK_VERSION` inside the `ios/titanium.xcconfig` file to the Ti.SDK version you want to build with.
 - Build the project with `appc run -p ios --build-only`
 - Check the [releases tab](https://github.com/hansemannn/ti.googlesignin/releases) for stable pre-packaged versions of the module
