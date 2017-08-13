@@ -1,13 +1,13 @@
 /**
- * Appcelerator Titanium Mobile
- * Copyright (c) 2009-2016 by Appcelerator, Inc. All Rights Reserved.
- * Licensed under the terms of the Apache Public License
- * Please see the LICENSE included with this distribution for details.
+ * ti.googlesignin
+ *
+ * Created by Hans Knöchel
+ * Copyright (c) 2017 Hans Knöchel. All rights reserved.
  */
+
 #import "TiViewProxy.h"
 
 @interface TiGooglesigninSignInButtonProxy : TiViewProxy {
-    
 }
 
 @end
