@@ -1,8 +1,8 @@
 /**
  * ti.googlesignin
  *
- * Created by Hans Knoechel
- * Copyright (c) 2017 Your Company. All rights reserved.
+ * Created by Hans Knöchel
+ * Copyright (c) 2017 Hans Knöchel. All rights reserved.
  */
 
 #import "TiModule.h"
