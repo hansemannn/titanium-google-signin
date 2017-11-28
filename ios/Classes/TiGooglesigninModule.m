@@ -267,7 +267,6 @@
     @"authentication" : @{
       @"clientID" : user.authentication.clientID,
       @"accessToken" : user.authentication.accessToken,
-      @"clientID" : user.authentication.clientID,
       @"accessTokenExpirationDate" : user.authentication.accessTokenExpirationDate,
       @"refreshToken" : user.authentication.refreshToken,
       @"idToken" : user.authentication.idToken,
