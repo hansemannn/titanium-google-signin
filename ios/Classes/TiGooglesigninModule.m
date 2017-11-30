@@ -207,7 +207,7 @@
 - (void)signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
   if ([self _hasListeners:@"disconnect"]) {
-    [self fireEvent:@"disconnect" withObject:@{ @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+    [self fireEvent:@"disconnect"];
   }
 }
 

@@ -93,7 +93,7 @@ If you want to build the module from the source, you need to check some things b
 TBA
 
 ### Example
-For a full example, check the demo in `example/app.js`.
+For a basic example, check the demo in `example/app.js`. For a full sample-app, check out the demo in `example/sample-app`.
 
 ### Author
 Hans Knoechel ([@hansemannnn](https://twitter.com/hansemannnn) / [Web](http://hans-knoechel.de))
