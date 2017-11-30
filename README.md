@@ -7,9 +7,8 @@
 Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile. The Android version of this module is linked as a sub-module from [AppWerft/Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) in `android/`. Thanks for that!
 
 ## Requirements
-  * Titanium SDK 5.5.1.GA+
-  * iOS 7.1+
-  * Android 4.0+
+  * Titanium SDK 5.5.1.GA or later
+  * iOS 7.1 or later
 
 ### Download
   * [Stable release](https://github.com/hansemannn/Ti.GoogleSignIn/releases)
@@ -58,15 +57,32 @@ Google.initialize({
 });
 ```
 #### Methods
-- [x] `signIn`
-- [x] `signInSilently`
-- [x] `signOut`
-- [x] `disconnect`
-- [x] `hasAuthInKeychain`
-- [x] `currentUserImageURLWithSize`
+- [x] `signIn()`
+- [x] `signInSilently()`
+- [x] `signOut()`
+- [x] `disconnect()`
+- [x] `hasAuthInKeychain` -> Boolean
+- [x] `currentUserImageURLWithSize(size)` -> String
 
 #### Properties
-- [x] `currentUser`
+* [x] `currentUser` (Dictionary)
+    * `id` (String) 
+    * `scopes` (Array<String>) 
+    * `serverAuthCode` (String) 
+    * `hostedDomain` (String) 
+    * `profile` (Dictionary)
+        * `name` (String)
+        * `givenName` (String)
+        * `familyName` (String)
+        * `email` (String)
+        * `hasImage` (Boolean)
+    * `authentication` (Dictionary)
+        * `clientID` (String)
+        * `accessToken` (String)
+        * `accessTokenExpirationDate` (Date)
+        * `refreshToken` (String)
+        * `idToken` (String)
+        * `idTokenExpirationDate` (Date)
 
 #### Events
 - [x] `login`
@@ -89,9 +105,6 @@ If you want to build the module from the source, you need to check some things b
 - Build the project with `appc run -p ios --build-only`
 - Check the [releases tab](https://github.com/hansemannn/ti.googlesignin/releases) for stable pre-packaged versions of the module
 
-### Features
-TBA
-
 ### Example
 For a basic example, check the demo in `example/app.js`. For a full sample-app, check out the demo in `example/sample-app`.
 
@@ -102,4 +115,4 @@ Hans Knoechel ([@hansemannnn](https://twitter.com/hansemannnn) / [Web](http://ha
 Apache 2.0
 
 ### Contributing
-Code contributions are greatly appreciated, please submit a new [pull request](https://github.com/hansemannn/ti.googlesignin/pull/new/master)!
+Code contributions are greatly appreciated, please submit a new [pull request](https://github.com/hansemannn/titanium-google-signin/pull/new/master)!
