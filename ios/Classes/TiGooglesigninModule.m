@@ -2,7 +2,7 @@
  * ti.googlesignin
  *
  * Created by Hans Knöchel
- * Copyright (c) 2017 Hans Knöchel. All rights reserved.
+ * Copyright (c) 2017-present Hans Knöchel. All rights reserved.
  */
 
 #import "TiGooglesigninModule.h"
@@ -164,18 +164,18 @@
   return @([[GIDSignIn sharedInstance] hasAuthInKeychain]);
 }
 
-- (id)hasAuthInKeychain:(id)unused
+- (NSNumber *)hasAuthInKeychain:(id)unused
 {
-  return NUMBOOL([[GIDSignIn sharedInstance] hasAuthInKeychain]);
+  return @([[GIDSignIn sharedInstance] hasAuthInKeychain]);
 }
 
-- (id)currentUser
+- (NSDictionary *)currentUser
 {
   ENSURE_LOGGED_IN
   return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser]];
 }
 
-- (id)currentUserImageURLWithSize:(id)size
+- (NSString *)currentUserImageURLWithSize:(id)size
 {
   ENSURE_LOGGED_IN
   ENSURE_SINGLE_ARG(size, NSNumber);
@@ -192,7 +192,7 @@
       [self fireEvent:@"error"
            withObject:@{
              @"message" : [error localizedDescription],
-             @"code" : NUMINTEGER([error code])
+             @"code" : @([error code])
            }];
     }
 
@@ -236,7 +236,7 @@
       [self fireEvent:@"error"
            withObject:@{
              @"message" : [error localizedDescription],
-             @"code" : NUMINTEGER([error code])
+             @"code" : @([error code])
            }];
     }
 
@@ -255,14 +255,14 @@
   return @{
     @"id" : user.userID,
     @"scopes" : user.accessibleScopes,
-    @"serverAuthCode" : user.serverAuthCode ?: [NSNull null],
-    @"hostedDomain" : user.hostedDomain ?: [NSNull null],
+    @"serverAuthCode" : NULL_IF_NIL(user.serverAuthCode),
+    @"hostedDomain" : NULL_IF_NIL(user.hostedDomain),
     @"profile" : @{
       @"name" : user.profile.name,
       @"givenName" : user.profile.givenName,
       @"familyName" : user.profile.familyName,
       @"email" : user.profile.email,
-      @"hasImage" : NUMBOOL(user.profile.hasImage),
+      @"hasImage" : @(user.profile.hasImage),
     },
     @"authentication" : @{
       @"clientID" : user.authentication.clientID,

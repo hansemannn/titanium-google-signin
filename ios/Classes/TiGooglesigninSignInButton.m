@@ -2,7 +2,7 @@
  * ti.googlesignin
  *
  * Created by Hans Knöchel
- * Copyright (c) 2017 Hans Knöchel. All rights reserved.
+ * Copyright (c) 2017-present Hans Knöchel. All rights reserved.
  */
 
 #import "TiGooglesigninSignInButton.h"
@@ -12,11 +12,11 @@
 
 - (GIDSignInButton *)loginButton
 {
-  if (button == nil) {
-    button = [[GIDSignInButton alloc] initWithFrame:self.bounds];
-    [self addSubview:button];
+  if (_button == nil) {
+    _button = [[GIDSignInButton alloc] initWithFrame:self.bounds];
+    [self addSubview:_button];
   }
-  return button;
+  return _button;
 }
 
 - (void)frameSizeChanged:(CGRect)frame bounds:(CGRect)bounds
