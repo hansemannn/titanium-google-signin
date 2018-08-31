@@ -183,6 +183,16 @@
   return [[[[[GIDSignIn sharedInstance] currentUser] profile] imageURLWithDimension:[TiUtils intValue:size]] absoluteString];
 }
 
+- (void)setLanguage:(NSString *)language
+{
+  [[GIDSignIn sharedInstance] setLanguage:language];
+}
+
+- (NSString *)language
+{
+  return [[GIDSignIn sharedInstance] language];
+}
+
 #pragma mark Delegates
 
 - (void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error

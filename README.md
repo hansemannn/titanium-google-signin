@@ -65,7 +65,8 @@ Google.initialize({
 - [x] `currentUserImageURLWithSize(size)` -> String
 
 #### Properties
-* [x] `currentUser` (Dictionary)
+* [x] `language` (String, `get|set`)
+* [x] `currentUser` (Dictionary, `get`)
     * `id` (String) 
     * `scopes` (Array<String>) 
     * `serverAuthCode` (String) 
