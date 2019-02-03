@@ -11,8 +11,8 @@ Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK i
   * iOS 7.1 or later
 
 ### Download
-  * [Stable release](https://github.com/hansemannn/Ti.GoogleSignIn/releases)
-  * [![gitTio](http://hans-knoechel.de/shields/shield-gittio.svg)](http://gitt.io/component/ti.googlesignin)
+  * [Stable release](https://github.com/hansemannn/titanium-google-signin/releases)
+  * [![gitTio](http://hans-knoechel.de/shields/shield-gittio.svg)](http://gitt.io/component/titanium-google-signin)
 
 ### Setup
 Unpack the module and place it inside the `modules/iphone/` folder of your project.
@@ -87,24 +87,22 @@ Google.initialize({
 
 #### Events
 - [x] `login`
-- [x] `disconnect`
+- [x] `logout`
 - [x] `cancel`
-- [x] `error`
 - [x] `load`
 - [x] `open`
 - [x] `close`
 
-The `login`- and `disconnect` events include a `user` key that includes the following user-infos:
+The `login`- and `logout` events include a `success` flag as well as a `user` key that includes the following user-infos:
 ```
 id, scopes, serverAuthCode, hostedDomain, profile, authentication
 ```
 
 ### Build
 If you want to build the module from the source, you need to check some things beforehand:
-- Ensure to build the module with Titanium SDK 6.1.0 and later in order to use the new `TI_MODULE_VERSION` macro that generates the framework-search-paths
 - Set the `TITANIUM_SDK_VERSION` inside the `ios/titanium.xcconfig` file to the Ti.SDK version you want to build with.
 - Build the project with `appc run -p ios --build-only`
-- Check the [releases tab](https://github.com/hansemannn/ti.googlesignin/releases) for stable pre-packaged versions of the module
+- Check the [releases tab](https://github.com/hansemannn/titanium-google-signin/releases) for stable pre-packaged versions of the module
 
 ### Example
 For a basic example, check the demo in `example/app.js`. For a full sample-app, check out the demo in `example/sample-app`.

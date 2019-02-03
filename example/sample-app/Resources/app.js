@@ -40,6 +40,11 @@ var btn = Ti.UI.createButton({
 });
 
 Google.addEventListener('login', function(e) {
+  if (!e.success) {
+    Ti.API.error('Cannot log in:' + e.error);
+    return;
+  }
+
   Ti.API.info('Logged in!');
   Ti.API.info(e.user);
 
@@ -48,7 +53,7 @@ Google.addEventListener('login', function(e) {
   updateButtonState();
 });
 
-Google.addEventListener('disconnect', function(e) {
+Google.addEventListener('logout', function(e) {
   Ti.API.info('Logged out!');
 
   loggedIn = false;

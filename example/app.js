@@ -23,6 +23,11 @@ var btn = Ti.UI.createButton({
 });
 
 Google.addEventListener('login', function(e) {
+    if (!e.success) {
+        Ti.API.error('Cannot log in: ' + e.error);
+        return;
+    }
+
     Ti.API.info('Logged in!');
     Ti.API.info(e.user);
 
@@ -40,8 +45,8 @@ Google.addEventListener('login', function(e) {
     updateButtonState();
 });
 
-Google.addEventListener('disconnect', function(e) {
-    Ti.API.info('Disconnected!'); // The Google SignIn API prefers "diconnect" over "logout"
+Google.addEventListener('logout', function(e) {
+    Ti.API.info('Logged out / disconnected!');
     Ti.API.info(e.user);
 
     idLabel.text = '';
@@ -60,10 +65,6 @@ Google.addEventListener('load', function(e) {
 
 Google.addEventListener('cancel', function(e) {
     Ti.API.info('Login UI cancelled: ' + e.message);
-});
-
-Google.addEventListener('error', function(e) {
-    Ti.API.info('Login UI errored: ' + e.message);
 });
 
 Google.addEventListener('open', function(e) {
@@ -107,7 +108,6 @@ var idLabel = Ti.UI.createLabel({
     text: ''
 });
 scroll.add(idLabel);
-
 
 var nameLabel = Ti.UI.createLabel({
     color: 'black',

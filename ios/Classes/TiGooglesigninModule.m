@@ -197,27 +197,27 @@
 
 - (void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
-  if (error != nil) {
-    if ([self _hasListeners:@"error"]) {
-      [self fireEvent:@"error"
-           withObject:@{
-             @"message" : [error localizedDescription],
-             @"code" : @([error code])
-           }];
+  if ([self _hasListeners:@"login"]) {
+    if (error != nil) {
+      if ([self _hasListeners:@"error"]) {
+        [self fireEvent:@"login" withObject:@{
+          @"success": @(NO),
+          @"error" : [error localizedDescription],
+          @"code" : @([error code])
+        }];
+      }
+      
+      return;
     }
 
-    return;
-  }
-
-  if ([self _hasListeners:@"login"]) {
-    [self fireEvent:@"login" withObject:@{ @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+    [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
   }
 }
 
 - (void)signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
-  if ([self _hasListeners:@"disconnect"]) {
-    [self fireEvent:@"disconnect"];
+  if ([self _hasListeners:@"logout"]) {
+    [self fireEvent:@"logout"];
   }
 }
 
@@ -242,9 +242,10 @@
 - (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error
 {
   if (error != nil) {
-    if ([self _hasListeners:@"error"]) {
-      [self fireEvent:@"error"
+    if ([self _hasListeners:@"login"]) {
+      [self fireEvent:@"login"
            withObject:@{
+             @"success": @(NO),
              @"message" : [error localizedDescription],
              @"code" : @([error code])
            }];
@@ -264,7 +265,7 @@
 {
   return @{
     @"id" : user.userID,
-    @"scopes" : user.accessibleScopes,
+    @"scopes" : user.grantedScopes,
     @"serverAuthCode" : NULL_IF_NIL(user.serverAuthCode),
     @"hostedDomain" : NULL_IF_NIL(user.hostedDomain),
     @"profile" : @{
