@@ -199,7 +199,9 @@
 {
   if ([self _hasListeners:@"login"]) {
     if (error != nil) {
-      if ([self _hasListeners:@"error"]) {
+      if (error.code == -5) {
+        [self fireEvent:@"login" withObject:@{ @"success": @(NO), @"cancelled": @(YES) }];
+      } else if ([self _hasListeners:@"error"]) {
         [self fireEvent:@"login" withObject:@{
           @"success": @(NO),
           @"error" : [error localizedDescription],
@@ -210,7 +212,7 @@
       return;
     }
 
-    [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+    [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
   }
 }
 
