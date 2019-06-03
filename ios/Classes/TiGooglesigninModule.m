@@ -267,23 +267,23 @@
 {
   return @{
     @"id" : user.userID,
-    @"scopes" : user.grantedScopes,
+    @"scopes" : NULL_IF_NIL(user.grantedScopes),
     @"serverAuthCode" : NULL_IF_NIL(user.serverAuthCode),
     @"hostedDomain" : NULL_IF_NIL(user.hostedDomain),
     @"profile" : @{
-      @"name" : user.profile.name,
-      @"givenName" : user.profile.givenName,
-      @"familyName" : user.profile.familyName,
-      @"email" : user.profile.email,
-      @"hasImage" : @(user.profile.hasImage),
+      @"name" : NULL_IF_NIL(user.profile.name),
+      @"givenName" : NULL_IF_NIL(user.profile.givenName),
+      @"familyName" : NULL_IF_NIL(user.profile.familyName),
+      @"email" : NULL_IF_NIL(user.profile.email),
+      @"hasImage" : @(user.profile.hasImage)
     },
     @"authentication" : @{
-      @"clientID" : user.authentication.clientID,
-      @"accessToken" : user.authentication.accessToken,
-      @"accessTokenExpirationDate" : user.authentication.accessTokenExpirationDate,
-      @"refreshToken" : user.authentication.refreshToken,
-      @"idToken" : user.authentication.idToken,
-      @"idTokenExpirationDate" : user.authentication.idTokenExpirationDate,
+      @"clientID" : NULL_IF_NIL(user.authentication.clientID),
+      @"accessToken" : NULL_IF_NIL(user.authentication.accessToken),
+      @"accessTokenExpirationDate" : NULL_IF_NIL(user.authentication.accessTokenExpirationDate),
+      @"refreshToken" : NULL_IF_NIL(user.authentication.refreshToken),
+      @"idToken" : NULL_IF_NIL(user.authentication.idToken),
+      @"idTokenExpirationDate" : NULL_IF_NIL(user.authentication.idTokenExpirationDate)
     }
   };
 }
