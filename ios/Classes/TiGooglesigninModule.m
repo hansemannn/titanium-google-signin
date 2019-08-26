@@ -53,6 +53,11 @@
 #endif
   }
 
+  // Fix a psossible nullability issue with iOS 13+ (see TIMOB-27354)
+  if ([sourceApplication isKindOfClass:[NSNull class]]) {
+    sourceApplication = nil;
+  }
+
   if (urlString != nil) {
     [[GIDSignIn sharedInstance] handleURL:[NSURL URLWithString:urlString]
                         sourceApplication:sourceApplication
