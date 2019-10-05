@@ -8,7 +8,7 @@
 #import "TiModule.h"
 #import <GoogleSignIn/GoogleSignIn.h>
 
-@interface TiGooglesigninModule : TiModule <GIDSignInDelegate, GIDSignInUIDelegate>
+@interface TiGooglesigninModule : TiModule <GIDSignInDelegate>
 
 - (void)initialize:(id)args;
 

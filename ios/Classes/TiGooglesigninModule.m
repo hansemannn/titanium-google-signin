@@ -12,7 +12,7 @@
 #import "TiUtils.h"
 
 #define ENSURE_LOGGED_IN                                                              \
-  if (![[GIDSignIn sharedInstance] hasAuthInKeychain]) {                              \
+  if (![[GIDSignIn sharedInstance] hasPreviousSignIn]) {                              \
     NSLog(@"[WARN] No user infos found. Check with \"hasAuthInKeychain()\" before."); \
     return nil;                                                                       \
   }
@@ -43,25 +43,10 @@
 - (void)handleOpenURL:(NSNotification *)notification
 {
   NSDictionary *launchOptions = [[TiApp app] launchOptions];
-  NSString *urlString = [launchOptions objectForKey:@"url"];
-  NSString *sourceApplication = [launchOptions objectForKey:@"source"];
-  id annotation = nil;
+  NSString *url = [launchOptions objectForKey:@"url"];
 
-  if ([TiUtils isIOS9OrGreater]) {
-#ifdef __IPHONE_9_0
-    annotation = [launchOptions objectForKey:UIApplicationOpenURLOptionsAnnotationKey];
-#endif
-  }
-
-  // Fix a psossible nullability issue with iOS 13+ (see TIMOB-27354)
-  if ([sourceApplication isKindOfClass:[NSNull class]]) {
-    sourceApplication = nil;
-  }
-
-  if (urlString != nil) {
-    [[GIDSignIn sharedInstance] handleURL:[NSURL URLWithString:urlString]
-                        sourceApplication:sourceApplication
-                               annotation:annotation];
+  if (url != nil) {
+    [[GIDSignIn sharedInstance] handleURL:[NSURL URLWithString:url]];
   }
 }
 
@@ -107,7 +92,7 @@
                                              object:nil];
 
   [[GIDSignIn sharedInstance] setDelegate:self];
-  [[GIDSignIn sharedInstance] setUiDelegate:self];
+  [[GIDSignIn sharedInstance] setPresentingViewController:TiApp.app.controller.topPresentedController];
 
   [[GIDSignIn sharedInstance] setClientID:clientID];
 
@@ -149,7 +134,7 @@
 - (void)signInSilently:(id)unused
 {
   ENSURE_UI_THREAD(signInSilently, unused);
-  [[GIDSignIn sharedInstance] signInSilently];
+  [[GIDSignIn sharedInstance] restorePreviousSignIn];
 }
 
 - (void)signOut:(id)unused
@@ -166,12 +151,12 @@
 
 - (NSNumber *)loggedIn
 {
-  return @([[GIDSignIn sharedInstance] hasAuthInKeychain]);
+  return @([[GIDSignIn sharedInstance] hasPreviousSignIn]);
 }
 
 - (NSNumber *)hasAuthInKeychain:(id)unused
 {
-  return @([[GIDSignIn sharedInstance] hasAuthInKeychain]);
+  return @([[GIDSignIn sharedInstance] hasPreviousSignIn]);
 }
 
 - (NSDictionary *)currentUser
@@ -225,44 +210,6 @@
 {
   if ([self _hasListeners:@"logout"]) {
     [self fireEvent:@"logout"];
-  }
-}
-
-- (void)signIn:(GIDSignIn *)signIn presentViewController:(UIViewController *)viewController
-{
-  [[TiApp app] showModalController:viewController animated:YES];
-
-  if ([self _hasListeners:@"open"]) {
-    [self fireEvent:@"open"];
-  }
-}
-
-- (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController
-{
-  [[TiApp app] hideModalController:viewController animated:YES];
-
-  if ([self _hasListeners:@"close"]) {
-    [self fireEvent:@"close"];
-  }
-}
-
-- (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error
-{
-  if (error != nil) {
-    if ([self _hasListeners:@"login"]) {
-      [self fireEvent:@"login"
-           withObject:@{
-             @"success": @(NO),
-             @"message" : [error localizedDescription],
-             @"code" : @([error code])
-           }];
-    }
-
-    return;
-  }
-
-  if ([self _hasListeners:@"load"]) {
-    [self fireEvent:@"load"];
   }
 }
 
