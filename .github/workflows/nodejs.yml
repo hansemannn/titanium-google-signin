@@ -20,6 +20,7 @@ jobs:
     - name: build module
       run: |
         npm i -g titanium
+        ti sdk install 8.3.0.GA
         ti build -p ios --build-only
       env:
         CI: true
