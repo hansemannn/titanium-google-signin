@@ -1,4 +1,4 @@
-name: Node CI
+name: Titanium module
 
 on: [push]
 
@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: build module
+    - name: Install dependencies, build module
       run: |
         npm i -g titanium
         ti sdk install 8.3.0.GA
