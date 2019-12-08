@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
 
     strategy:
       matrix:
@@ -21,6 +21,7 @@ jobs:
       run: |
         npm i -g titanium
         ti sdk install 8.3.0.GA
+        cd ios
         ti build -p ios --build-only
       env:
         CI: true
