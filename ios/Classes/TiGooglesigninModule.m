@@ -1,15 +1,11 @@
 /**
- * ti.googlesignin
+ * titanium-googlesignin
  *
  * Created by Hans Knöchel
  * Copyright (c) 2017-present Hans Knöchel. All rights reserved.
  */
 
 #import "TiGooglesigninModule.h"
-#import "TiApp.h"
-#import "TiBase.h"
-#import "TiHost.h"
-#import "TiUtils.h"
 
 #define ENSURE_LOGGED_IN                                                              \
   if (![[GIDSignIn sharedInstance] hasPreviousSignIn]) {                              \

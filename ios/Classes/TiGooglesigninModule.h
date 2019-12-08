@@ -1,12 +1,12 @@
 /**
- * ti.googlesignin
+ * titanium-googlesignin
  *
  * Created by Hans Knöchel
  * Copyright (c) 2017-present Hans Knöchel. All rights reserved.
  */
 
-#import "TiModule.h"
 #import <GoogleSignIn/GoogleSignIn.h>
+#import <TitaniumKit/TitaniumKit.h>
 
 @interface TiGooglesigninModule : TiModule <GIDSignInDelegate>
 
