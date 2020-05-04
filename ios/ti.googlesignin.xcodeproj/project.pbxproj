@@ -29,7 +29,6 @@
 		AA747D9F0F9514B9006C5449 /* TiGooglesignin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* TiGooglesignin_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		DB61E7C61E575D15007A3734 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB61E7C21E575D15007A3734 /* GoogleSignIn.framework */; };
-		DB61E7C71E575D15007A3734 /* GoogleSignInDependencies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB61E7C31E575D15007A3734 /* GoogleSignInDependencies.framework */; };
 		DBC5C8B41E57865100E2BD12 /* TiGooglesigninSignInButton.h in Headers */ = {isa = PBXBuildFile; fileRef = DBC5C8B01E57865100E2BD12 /* TiGooglesigninSignInButton.h */; };
 		DBC5C8B51E57865100E2BD12 /* TiGooglesigninSignInButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DBC5C8B11E57865100E2BD12 /* TiGooglesigninSignInButton.m */; };
 		DBC5C8B61E57865100E2BD12 /* TiGooglesigninSignInButtonProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = DBC5C8B21E57865100E2BD12 /* TiGooglesigninSignInButtonProxy.h */; };
@@ -57,7 +56,6 @@
 		D2AAC07E0554694100DB518D /* libti.googlesignin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libti.googlesignin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB4075BA1E578F8900CCAD70 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleSignIn.bundle; path = Resources/GoogleSignIn.bundle; sourceTree = "<group>"; };
 		DB61E7C21E575D15007A3734 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignIn.framework; path = platform/GoogleSignIn.framework; sourceTree = "<group>"; };
-		DB61E7C31E575D15007A3734 /* GoogleSignInDependencies.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignInDependencies.framework; path = platform/GoogleSignInDependencies.framework; sourceTree = "<group>"; };
 		DBC5C8B01E57865100E2BD12 /* TiGooglesigninSignInButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiGooglesigninSignInButton.h; path = Classes/TiGooglesigninSignInButton.h; sourceTree = "<group>"; };
 		DBC5C8B11E57865100E2BD12 /* TiGooglesigninSignInButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiGooglesigninSignInButton.m; path = Classes/TiGooglesigninSignInButton.m; sourceTree = "<group>"; };
 		DBC5C8B21E57865100E2BD12 /* TiGooglesigninSignInButtonProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiGooglesigninSignInButtonProxy.h; path = Classes/TiGooglesigninSignInButtonProxy.h; sourceTree = "<group>"; };
@@ -70,7 +68,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB61E7C61E575D15007A3734 /* GoogleSignIn.framework in Frameworks */,
-				DB61E7C71E575D15007A3734 /* GoogleSignInDependencies.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,7 +98,6 @@
 			isa = PBXGroup;
 			children = (
 				DB61E7C21E575D15007A3734 /* GoogleSignIn.framework */,
-				DB61E7C31E575D15007A3734 /* GoogleSignInDependencies.framework */,
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -181,7 +177,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1140;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "ti.googlesignin" */;
 			compatibilityVersion = "Xcode 11.0";
