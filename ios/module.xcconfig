@@ -1,1 +1,1 @@
-OTHER_LDFLAGS = $(inherited) -framework SafariServices -framework Security -framework GoogleSignIn -framework GoogleSignInDependencies
+

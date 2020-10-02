@@ -27,15 +27,6 @@
   return @"ti.googlesignin";
 }
 
-#pragma mark Lifecycle
-
-- (void)startup
-{
-  [super startup];
-
-  NSLog(@"[DEBUG] %@ loaded", self);
-}
-
 - (void)handleOpenURL:(NSNotification *)notification
 {
   NSDictionary *launchOptions = [[TiApp app] launchOptions];
