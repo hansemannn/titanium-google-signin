@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies, build module
       run: |
         npm i -g titanium
-        ti sdk install 9.0.1.GA
+        ti sdk install 9.2.0.GA
         cd ios
         ti build -p ios --build-only
       env:
