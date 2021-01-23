@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 6.1.0
+apiversion: 4
+architectures: arm64-v8a armeabi-v7a x86 x86_64
+description: googlesignin
+author: Rainer Schleevoigt
+license: Apache 2
+copyright: Copyright (c) 2017-present by Rainer Schleevoigt
+
+# these should not be edited
+name: googlesignin
+moduleid: ti.googlesignin
+guid: d548b85b-bfcb-43c5-a13d-a63d148ba8a0
+platform: android
+minsdk: 9.0.0
