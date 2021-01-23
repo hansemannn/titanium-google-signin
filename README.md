@@ -40,6 +40,8 @@ Add the following URL types to your plist section of the tiapp.xml:
 
 #### Android Setup
 
+The Android setup is made possible by the excellent work from [chmiiller](https://github.com/chmiiller) in the [Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) repository. Thank you!
+
 ##### Permissions in manifest
 
 ```xml
