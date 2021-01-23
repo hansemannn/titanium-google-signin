@@ -1,25 +1,24 @@
-# Google SignIn iOS SDK in Appcelerator Titanium
-[![Build Status](https://travis-ci.org/hansemannn/titanium-google-signin.svg?branch=master)](https://travis-ci.org/hansemannn/titanium-google-signin) [![License](http://hans-knoechel.de/shields/shield-license.svg?v=1)](./LICENSE) [![Contact](http://hans-knoechel.de/shields/shield-twitter.svg?v=1)](http://twitter.com/hansemannnn)
+# Google SignIn SDK in Appcelerator Titanium
 
 <img src="example/demo.gif" height="300" alt="Google SignIn" />   
    
 ## Summary
-Ti.GoogleSignIn is an open-source project to support the Google SignIn iOS-SDK in Appcelerator's Titanium Mobile. The Android version of this module can be found [here](https://github.com/hansemannn/Ti.GoogleSignIn-Android) (sharing most of the APIs with parity).
+
+Ti.GoogleSignIn is an open-source project to support the Google SignIn SDK in Appcelerator's Titanium.
 
 ## Requirements
+
   * Titanium SDK 9.2.0+
-  * iOS 10+
+  * Ti.PlayServices (Android)
 
 ### Download
+
 [Releases page](https://github.com/hansemannn/titanium-google-signin/releases)
 
 ### Setup
-Unpack the module and place it inside the `modules/iphone/` folder of your project.
-Edit the modules section of your `tiapp.xml` file to include this module:
-```xml
-<modules>
-    <module platform="iphone">ti.googlesignin</module>
-</modules>
+
+#### iOS Setup
+
 ```
 Add the following URL types to your plist section of the tiapp.xml:
 ```xml
@@ -38,6 +37,41 @@ Add the following URL types to your plist section of the tiapp.xml:
     </dict>
 </array>
 ```
+
+#### Android Setup
+
+##### Permissions in manifest
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+```
+
+##### ⚠️ PLEASE NOTE!
+
+**You will need to use the Web ClientID from Google instead of a Android one.**
+   
+##### Obtaining a SHA-1 with Titanium
+
+In order to use Google Sign In in your app you will need to provide an SHA-1 certificate fingerprint for Google Console.
+You will need to provide a debug and a distribution SHA-1 fingerprint for your app. On Titanium, the debug SHA-1
+has to be generated from the `dev_keystore` file from your Titanium SDK android folder located at "mobilesdk/<platform>/<sdk_version>/android/dev_keystore".
+On macOS for example it would rely on: "~/Library/Application\ Support/Titanium/mobilesdk/osx/9.3.0.GA/android/dev_keystore".   
+And an command line example for it would be:   
+```
+keytool -list -v -keystore ~/Library/Application\ Support/Titanium/mobilesdk/osx/9.3.0.GA/android/dev_keystore
+```   
+
+You can follow same instructions used to configure a map in your Android app from [Appcelerator Docs](http://docs.appcelerator.com/platform/latest/#!/guide/Google_Maps_v2_for_Android-section-src-36739898_GoogleMapsv2forAndroid-ObtainandAddaGoogleAPIKey).   
+
+This repo also [includes a video](https://github.com/AppWerft/Ti.GoogleSignIn/blob/master/example/How%20to%20create%20Android%20keys.mov) on how to create an Android app on Firebase and Google Developers Console to better explain the process.   
+As Appcelerator's documentation recommends, when submitting your app to Google Play Store you will need to create a production .keystore file, so don't forget to create another SHA-1 for this key and remember to add it also as another "fingerprint" on Firebase.   
+Note that some users have reported problems when submitting new apps to the Play Store, where the Google Login stop working on production. A solution found was to get another SHA-1 fingerprint from the Google Play app's dashboard and add this fingerprint to Firebase.
+These fingerprints could be found on your Google Play Console, under the "Release Management" menu on the left and then on "App signing".
+Here is an example on how it looks like:   
+<img src="example/play_store_sha1.png" width="483" alt="Google Play Console" />   
+
 
 Initialize the module by setting the Google SignIn API key you can get from the Google API Console.
 ```javascript
