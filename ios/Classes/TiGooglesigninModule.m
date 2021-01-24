@@ -136,11 +136,6 @@
   [[GIDSignIn sharedInstance] disconnect];
 }
 
-- (NSNumber *)loggedIn
-{
-  return @([[GIDSignIn sharedInstance] hasPreviousSignIn]);
-}
-
 - (NSNumber *)hasAuthInKeychain:(id)unused
 {
   return @([[GIDSignIn sharedInstance] hasPreviousSignIn]);

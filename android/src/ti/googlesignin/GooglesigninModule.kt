@@ -8,25 +8,25 @@
  */
 package ti.googlesignin
 
-import org.appcelerator.kroll.annotations.Kroll.module
-import org.appcelerator.kroll.KrollModule
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import android.app.Activity
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import org.appcelerator.titanium.TiApplication
-import org.appcelerator.kroll.annotations.Kroll.method
-import org.appcelerator.kroll.KrollDict
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import org.appcelerator.kroll.annotations.Kroll.getProperty
 import android.content.Intent
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import org.appcelerator.kroll.KrollDict
+import org.appcelerator.kroll.KrollModule
+import org.appcelerator.kroll.annotations.Kroll
+import org.appcelerator.kroll.annotations.Kroll.*
 import org.appcelerator.kroll.common.Log
-import org.appcelerator.titanium.util.TiActivitySupport
 import org.appcelerator.kroll.common.TiMessenger
+import org.appcelerator.titanium.TiApplication
 import org.appcelerator.titanium.util.TiActivityResultHandler
-import java.lang.Exception
-import java.util.ArrayList
+import org.appcelerator.titanium.util.TiActivitySupport
+import java.util.*
+
 
 @module(name = "Googlesignin", id = "ti.googlesignin")
 class GooglesigninModule : KrollModule() {
@@ -40,13 +40,7 @@ class GooglesigninModule : KrollModule() {
         if (account != null) {
             fireLoginEvent(account)
         } else {
-            signInClient?.silentSignIn()?.addOnCompleteListener(TiApplication.getAppCurrentActivity()) { task: Task<GoogleSignInAccount?> ->
-                if (task.isSuccessful) {
-                    task.result?.let {
-                        fireLoginEvent(it)
-                    }
-                }
-            }
+            signInSilently()
         }
     }
 
@@ -66,9 +60,10 @@ class GooglesigninModule : KrollModule() {
         signInClient = GoogleSignIn.getClient(TiApplication.getAppCurrentActivity(), options)
     }
 
-    @get:getProperty
-    val loggedIn: Boolean
-    get() = GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity()) != null
+    @method
+    fun hasAuthInKeychain(): Boolean {
+        return GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity()) != null
+    }
 
     @method
     fun signIn() {
@@ -90,18 +85,45 @@ class GooglesigninModule : KrollModule() {
     }
 
     @method
+    fun signInSilently() {
+        signInClient?.silentSignIn()?.addOnCompleteListener(TiApplication.getAppCurrentActivity()) { task: Task<GoogleSignInAccount?> ->
+            if (task.isSuccessful) {
+                task.result?.let {
+                    fireLoginEvent(it)
+                }
+            }
+        }
+    }
+
+    @method
     fun signOut() {
-        if (signInClient == null) {
-            Log.e(LCAT, "googleApiClient does not exist")
+        if (!hasAuthInKeychain()) {
+            Log.e(LCAT, "Not currently logged in. Make sure to check with \"TiGoogleSignIn.hasAuthInKeychain()\" before calling this method");
             return
         }
 
         signInClient?.signOut()?.addOnCompleteListener(TiApplication.getAppCurrentActivity()) {
-            val kd = KrollDict()
-            fireEvent("disconnect", kd)
+            if (it.isSuccessful) {
+                fireEvent("logout", KrollDict())
+            }
         }
     }
 
+    @method
+    fun disconnect() {
+        signInClient?.revokeAccess()?.addOnCompleteListener(TiApplication.getAppCurrentActivity(), OnCompleteListener {
+            if (it.isSuccessful) {
+                fireEvent("disconnect", KrollDict())
+            }
+        })
+    }
+
+    @getProperty
+    fun currentUser(): KrollDict? {
+        val user = GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity()) ?: return null
+        return currentUserAsKrollDict(user)
+    }
+    
     private inner class SignInResultHandler : TiActivityResultHandler {
         override fun onError(arg0: Activity, arg1: Int, e: Exception) {
             fireErrorEvent(e)
@@ -149,6 +171,15 @@ class GooglesigninModule : KrollModule() {
 
     private fun fireLoginEvent(googleSignInAccount: GoogleSignInAccount) {
         val event = KrollDict()
+
+        event["user"] = currentUserAsKrollDict(googleSignInAccount)
+        event["cancelled"] = false
+        event["success"] = true
+
+        fireEvent("login", event)
+    }
+
+    private fun currentUserAsKrollDict(googleSignInAccount: GoogleSignInAccount): KrollDict {
         val user = KrollDict()
         val profile = KrollDict()
         val auth = KrollDict()
@@ -174,11 +205,8 @@ class GooglesigninModule : KrollModule() {
         user["serverAuthCode"] = googleSignInAccount.serverAuthCode
         user["profile"] = profile
         user["authentication"] = auth
-        event["user"] = user
-        event["cancelled"] = false
-        event["success"] = true
 
-        fireEvent("login", event)
+        return user
     }
 
     companion object {
