@@ -19,7 +19,6 @@ Ti.GoogleSignIn is an open-source project to support the Google SignIn SDK in Ap
 
 #### iOS Setup
 
-```
 Add the following URL types to your plist section of the tiapp.xml:
 ```xml
 <key>CFBundleURLTypes</key>
@@ -40,7 +39,7 @@ Add the following URL types to your plist section of the tiapp.xml:
 
 #### Android Setup
 
-The Android setup is made possible by the excellent work from [chmiiller](https://github.com/chmiiller) in the [Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) repository. Thank you!
+The Android setup is made possible by the excellent work from [chmiiller](https://github.com/chmiiller) and [AppWerft](https://github.com/AppWerft) in the [Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) repository. Thank you!
 
 ##### Permissions in manifest
 
@@ -52,7 +51,7 @@ The Android setup is made possible by the excellent work from [chmiiller](https:
 
 ##### ⚠️ PLEASE NOTE!
 
-**You will need to use the Web ClientID from Google instead of a Android one.**
+**You will need to use the Web ClientID from Google instead of an Android one.**
    
 ##### Obtaining a SHA-1 with Titanium
 
@@ -74,11 +73,13 @@ These fingerprints could be found on your Google Play Console, under the "Releas
 Here is an example on how it looks like:   
 <img src="example/play_store_sha1.png" width="483" alt="Google Play Console" />   
 
+#### Example
 
 Initialize the module by setting the Google SignIn API key you can get from the Google API Console.
 ```javascript
-var Google = require('ti.googlesignin');
-Google.initialize({
+import GoogleSignIn from 'ti.googlesignin';
+
+GoogleSignIn.initialize({
     clientID: '<client-id>',
 
     // Optional properties:
