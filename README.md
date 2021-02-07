@@ -40,6 +40,8 @@ Add the following URL types to your plist section of the tiapp.xml:
 
 #### Android Setup
 
+The Android setup is made possible by the excellent work from [chmiiller](https://github.com/chmiiller) in the [Ti.GoogleSignIn](https://github.com/AppWerft/Ti.GoogleSignIn) repository. Thank you!
+
 ##### Permissions in manifest
 
 ```xml
@@ -90,15 +92,17 @@ Google.initialize({
 });
 ```
 #### Methods
+
 - [x] `signIn()`
 - [x] `signInSilently()`
 - [x] `signOut()`
 - [x] `disconnect()`
 - [x] `hasAuthInKeychain` -> Boolean
-- [x] `currentUserImageURLWithSize(size)` -> String
+- [x] `currentUserImageURLWithSize(size)` -> String (iOS only)
 
 #### Properties
-* [x] `language` (String, `get|set`)
+
+* [x] `language` (String, `get|set`, iOS, only)
 * [x] `currentUser` (Dictionary, `get`)
     * `id` (String) 
     * `scopes` (Array<String>) 
@@ -119,32 +123,31 @@ Google.initialize({
         * `idTokenExpirationDate` (Date)
 
 #### Events
+
 - [x] `login`
 - [x] `logout`
-- [x] `cancel`
-- [x] `load`
-- [x] `open`
-- [x] `close`
 
-The `login`- and `logout` events include a `success` flag as well as a `user` key that includes the following user-infos:
-```
-id, scopes, serverAuthCode, hostedDomain, profile, authentication
-```
+The login event also includes the current user via the `user` property.
 
 ### Build
+
 If you want to build the module from the source, you need to check some things beforehand:
 - Set the `TITANIUM_SDK_VERSION` inside the `ios/titanium.xcconfig` file to the Ti.SDK version you want to build with.
 - Build the project with `appc run -p ios --build-only`
 - Check the [releases tab](https://github.com/hansemannn/titanium-google-signin/releases) for stable pre-packaged versions of the module
 
 ### Example
+
 For a basic example, check the demo in `example/app.js`. For a full sample-app, check out the demo in `example/sample-app`.
 
 ### Author
+
 Hans Knoechel ([@hansemannnn](https://twitter.com/hansemannnn) / [Web](http://hans-knoechel.de))
 
 ### License
+
 Apache 2.0
 
 ### Contributing
+
 Code contributions are greatly appreciated, please submit a new [pull request](https://github.com/hansemannn/titanium-google-signin/pull/new/master)!
