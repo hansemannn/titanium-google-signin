@@ -26,10 +26,10 @@
 		24DD6CFA1134B3F500162E58 /* TiGooglesigninModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 24DD6CF81134B3F500162E58 /* TiGooglesigninModule.m */; };
 		24DE9E1111C5FE74003F90F6 /* TiGooglesigninModuleAssets.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DE9E0F11C5FE74003F90F6 /* TiGooglesigninModuleAssets.h */; };
 		24DE9E1211C5FE74003F90F6 /* TiGooglesigninModuleAssets.m in Sources */ = {isa = PBXBuildFile; fileRef = 24DE9E1011C5FE74003F90F6 /* TiGooglesigninModuleAssets.m */; };
-		3A38F30D24D80C7200CC6EFB /* GTMAppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A38F30924D80C7100CC6EFB /* GTMAppAuth.framework */; };
-		3A38F30E24D80C7200CC6EFB /* AppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A38F30A24D80C7100CC6EFB /* AppAuth.framework */; };
-		3A38F30F24D80C7200CC6EFB /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A38F30B24D80C7100CC6EFB /* GoogleSignIn.framework */; };
-		3A38F31024D80C7200CC6EFB /* GTMSessionFetcher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A38F30C24D80C7100CC6EFB /* GTMSessionFetcher.framework */; };
+		3A832BB425D0541400B27CE0 /* AppAuth.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A832BB025D0541400B27CE0 /* AppAuth.xcframework */; };
+		3A832BB525D0541400B27CE0 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A832BB125D0541400B27CE0 /* GoogleSignIn.framework */; };
+		3A832BB625D0541400B27CE0 /* GTMSessionFetcher.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A832BB225D0541400B27CE0 /* GTMSessionFetcher.xcframework */; };
+		3A832BB725D0541400B27CE0 /* GTMAppAuth.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A832BB325D0541400B27CE0 /* GTMAppAuth.xcframework */; };
 		AA747D9F0F9514B9006C5449 /* TiGooglesignin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* TiGooglesignin_Prefix.pch */; };
 		DBC5C8B41E57865100E2BD12 /* TiGooglesigninSignInButton.h in Headers */ = {isa = PBXBuildFile; fileRef = DBC5C8B01E57865100E2BD12 /* TiGooglesigninSignInButton.h */; };
 		DBC5C8B51E57865100E2BD12 /* TiGooglesigninSignInButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DBC5C8B11E57865100E2BD12 /* TiGooglesigninSignInButton.m */; };
@@ -53,10 +53,10 @@
 		24DD6D1B1134B66800162E58 /* titanium.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = titanium.xcconfig; sourceTree = "<group>"; };
 		24DE9E0F11C5FE74003F90F6 /* TiGooglesigninModuleAssets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiGooglesigninModuleAssets.h; path = Classes/TiGooglesigninModuleAssets.h; sourceTree = "<group>"; };
 		24DE9E1011C5FE74003F90F6 /* TiGooglesigninModuleAssets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiGooglesigninModuleAssets.m; path = Classes/TiGooglesigninModuleAssets.m; sourceTree = "<group>"; };
-		3A38F30924D80C7100CC6EFB /* GTMAppAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GTMAppAuth.framework; path = platform/GTMAppAuth.framework; sourceTree = "<group>"; };
-		3A38F30A24D80C7100CC6EFB /* AppAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppAuth.framework; path = platform/AppAuth.framework; sourceTree = "<group>"; };
-		3A38F30B24D80C7100CC6EFB /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignIn.framework; path = platform/GoogleSignIn.framework; sourceTree = "<group>"; };
-		3A38F30C24D80C7100CC6EFB /* GTMSessionFetcher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GTMSessionFetcher.framework; path = platform/GTMSessionFetcher.framework; sourceTree = "<group>"; };
+		3A832BB025D0541400B27CE0 /* AppAuth.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppAuth.xcframework; path = platform/AppAuth.xcframework; sourceTree = "<group>"; };
+		3A832BB125D0541400B27CE0 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignIn.framework; path = platform/GoogleSignIn.framework; sourceTree = "<group>"; };
+		3A832BB225D0541400B27CE0 /* GTMSessionFetcher.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GTMSessionFetcher.xcframework; path = platform/GTMSessionFetcher.xcframework; sourceTree = "<group>"; };
+		3A832BB325D0541400B27CE0 /* GTMAppAuth.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GTMAppAuth.xcframework; path = platform/GTMAppAuth.xcframework; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* TiGooglesignin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiGooglesignin_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		D2AAC07E0554694100DB518D /* libti.googlesignin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libti.googlesignin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBC5C8B01E57865100E2BD12 /* TiGooglesigninSignInButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiGooglesigninSignInButton.h; path = Classes/TiGooglesigninSignInButton.h; sourceTree = "<group>"; };
@@ -70,10 +70,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A38F31024D80C7200CC6EFB /* GTMSessionFetcher.framework in Frameworks */,
-				3A38F30E24D80C7200CC6EFB /* AppAuth.framework in Frameworks */,
-				3A38F30F24D80C7200CC6EFB /* GoogleSignIn.framework in Frameworks */,
-				3A38F30D24D80C7200CC6EFB /* GTMAppAuth.framework in Frameworks */,
+				3A832BB725D0541400B27CE0 /* GTMAppAuth.xcframework in Frameworks */,
+				3A832BB425D0541400B27CE0 /* AppAuth.xcframework in Frameworks */,
+				3A832BB525D0541400B27CE0 /* GoogleSignIn.framework in Frameworks */,
+				3A832BB625D0541400B27CE0 /* GTMSessionFetcher.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,10 +102,10 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3A38F30A24D80C7100CC6EFB /* AppAuth.framework */,
-				3A38F30B24D80C7100CC6EFB /* GoogleSignIn.framework */,
-				3A38F30924D80C7100CC6EFB /* GTMAppAuth.framework */,
-				3A38F30C24D80C7100CC6EFB /* GTMSessionFetcher.framework */,
+				3A832BB025D0541400B27CE0 /* AppAuth.xcframework */,
+				3A832BB125D0541400B27CE0 /* GoogleSignIn.framework */,
+				3A832BB325D0541400B27CE0 /* GTMAppAuth.xcframework */,
+				3A832BB225D0541400B27CE0 /* GTMSessionFetcher.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -183,7 +183,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "ti.googlesignin" */;
 			compatibilityVersion = "Xcode 11.0";

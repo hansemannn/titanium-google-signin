@@ -26,6 +26,4 @@
 
 - (id)currentUserImageURLWithSize:(id)size;
 
-- (NSNumber *)loggedIn;
-
 @end
