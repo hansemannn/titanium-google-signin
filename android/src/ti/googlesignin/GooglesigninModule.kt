@@ -163,7 +163,7 @@ class GooglesigninModule : KrollModule() {
     private fun fireErrorEvent(exception: Exception?) {
         val event = KrollDict()
 
-        event["message"] = if (exception != null) exception.localizedMessage else "unknown exception"
+        event["error"] = if (exception != null) exception.localizedMessage else "unknown exception"
         event["success"] = false
 
         fireEvent("error", event)
