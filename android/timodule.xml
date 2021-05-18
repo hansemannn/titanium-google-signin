@@ -14,9 +14,6 @@
 					android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
 					android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 			</application>
-			<uses-permission android:name="android.permission.INTERNET"/>
-			<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-			<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
 		</manifest>
 	</android>
 </ti:module>
