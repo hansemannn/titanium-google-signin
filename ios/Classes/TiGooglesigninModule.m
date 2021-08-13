@@ -50,78 +50,76 @@
 {
   ENSURE_SINGLE_ARG(args, NSDictionary);
 
-  id clientID = [args objectForKey:@"clientID"];
-  id scopes = [args objectForKey:@"scopes"];
-  id language = [args objectForKey:@"language"];
-  id loginHint = [args objectForKey:@"loginHint"];
-  id hostedDomain = [args objectForKey:@"hostedDomain"];
-  id serverClientID = [args objectForKey:@"serverClientID"];
-  id shouldFetchBasicProfile = [args objectForKey:@"shouldFetchBasicProfile"];
-  id openIDRealm = [args objectForKey:@"openIDRealm"];
-
-  if (!clientID) {
-    NSLog(@"[ERROR] The \"clientID\" property is required when initializing Google Sign In.");
-    return;
-  }
-
-  ENSURE_TYPE(clientID, NSString);
-  ENSURE_TYPE_OR_NIL(scopes, NSArray);
-  ENSURE_TYPE_OR_NIL(language, NSString);
-  ENSURE_TYPE_OR_NIL(loginHint, NSString);
-  ENSURE_TYPE_OR_NIL(hostedDomain, NSString);
-  ENSURE_TYPE_OR_NIL(serverClientID, NSString);
-  ENSURE_TYPE_OR_NIL(shouldFetchBasicProfile, NSNumber);
-  ENSURE_TYPE_OR_NIL(openIDRealm, NSString);
-
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(handleOpenURL:)
                                                name:@"TiApplicationLaunchedFromURL"
                                              object:nil];
 
-  [[GIDSignIn sharedInstance] setDelegate:self];
-  [[GIDSignIn sharedInstance] setPresentingViewController:TiApp.app.controller.topPresentedController];
-
-  [[GIDSignIn sharedInstance] setClientID:clientID];
-
-  if (scopes != nil) {
-    [[GIDSignIn sharedInstance] setScopes:scopes];
-  }
-
-  if (language != nil) {
-    [[GIDSignIn sharedInstance] setLanguage:language];
-  }
-
-  if (loginHint != nil) {
-    [[GIDSignIn sharedInstance] setLoginHint:loginHint];
-  }
-
-  if (hostedDomain != nil) {
-    [[GIDSignIn sharedInstance] setHostedDomain:hostedDomain];
-  }
-
-  if (shouldFetchBasicProfile != nil) {
-    [[GIDSignIn sharedInstance] setShouldFetchBasicProfile:[TiUtils boolValue:shouldFetchBasicProfile def:YES]];
-  }
-
-  if (serverClientID != nil) {
-    [[GIDSignIn sharedInstance] setServerClientID:serverClientID];
-  }
-
-  if (openIDRealm != nil) {
-    [[GIDSignIn sharedInstance] setOpenIDRealm:openIDRealm];
-  }
+  // These are actually used in "signIn()" now, but we keep it here for backwards compatibility with Android
+  signInConfig = args;
 }
 
 - (void)signIn:(id)unused
 {
   ENSURE_UI_THREAD(signIn, unused);
-  [[GIDSignIn sharedInstance] signIn];
+    
+    id clientID = [signInConfig objectForKey:@"clientID"];
+    id scopes = [signInConfig objectForKey:@"scopes"];
+    id language = [signInConfig objectForKey:@"language"];
+    id loginHint = [signInConfig objectForKey:@"loginHint"];
+    id hostedDomain = [signInConfig objectForKey:@"hostedDomain"];
+    id serverClientID = [signInConfig objectForKey:@"serverClientID"];
+    id shouldFetchBasicProfile = [signInConfig objectForKey:@"shouldFetchBasicProfile"];
+    id openIDRealm = [signInConfig objectForKey:@"openIDRealm"];
+
+    if (!clientID) {
+      NSLog(@"[ERROR] The \"clientID\" property is required when initializing Google Sign In.");
+      return;
+    }
+
+    ENSURE_TYPE(clientID, NSString);
+    ENSURE_TYPE_OR_NIL(scopes, NSArray);
+    ENSURE_TYPE_OR_NIL(language, NSString);
+    ENSURE_TYPE_OR_NIL(loginHint, NSString);
+    ENSURE_TYPE_OR_NIL(hostedDomain, NSString);
+    ENSURE_TYPE_OR_NIL(serverClientID, NSString);
+    ENSURE_TYPE_OR_NIL(shouldFetchBasicProfile, NSNumber);
+    ENSURE_TYPE_OR_NIL(openIDRealm, NSString);
+
+    GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientID
+                                                           serverClientID:serverClientID
+                                                             hostedDomain:hostedDomain
+                                                              openIDRealm:openIDRealm];
+
+    if (scopes != nil) {
+        DEPRECATED_REMOVED(@"GoogleSignIn.scopes (removed by Google)", @"5.0.0", @"5.0.0");
+    }
+
+    if (language != nil) {
+        DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
+    }
+
+    if (loginHint != nil) {
+        DEPRECATED_REMOVED(@"GoogleSignIn.loginHint (removed by Google)", @"5.0.0", @"5.0.0");
+    }
+
+    if (shouldFetchBasicProfile != nil) {
+        DEPRECATED_REMOVED(@"GoogleSignIn.shouldFetchBasicProfile (removed by Google)", @"5.0.0", @"5.0.0");
+    }
+
+    [[GIDSignIn sharedInstance] signInWithConfiguration:config
+                             presentingViewController:TiApp.app.controller.topPresentedController
+                                             callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        [self fireLoginEventWithUser:user andError:error];
+    }];
 }
 
 - (void)signInSilently:(id)unused
 {
   ENSURE_UI_THREAD(signInSilently, unused);
-  [[GIDSignIn sharedInstance] restorePreviousSignIn];
+    [[GIDSignIn sharedInstance] restorePreviousSignInWithCallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        [self fireLoginEventWithUser:user andError:error];
+    }];
 }
 
 - (void)signOut:(id)unused
@@ -132,8 +130,12 @@
 
 - (void)disconnect:(id)unused
 {
-  ENSURE_UI_THREAD(disconnect, unused);
-  [[GIDSignIn sharedInstance] disconnect];
+    ENSURE_UI_THREAD(disconnect, unused);
+    [[GIDSignIn sharedInstance] disconnectWithCallback:^(NSError * _Nullable error) {
+        if ([self _hasListeners:@"logout"]) {
+            [self fireEvent:@"logout" withObject:@{ @"success": @(error == nil), @"error": NULL_IF_NIL(error.localizedDescription) }];
+        }
+    }];
 }
 
 - (NSNumber *)hasAuthInKeychain:(id)unused
@@ -157,45 +159,37 @@
 
 - (void)setLanguage:(NSString *)language
 {
-  [[GIDSignIn sharedInstance] setLanguage:language];
+    DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
 }
 
 - (NSString *)language
 {
-  return [[GIDSignIn sharedInstance] language];
-}
-
-#pragma mark Delegates
-
-- (void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
-{
-  if ([self _hasListeners:@"login"]) {
-    if (error != nil) {
-      if (error.code == -5) {
-        [self fireEvent:@"login" withObject:@{ @"success": @(NO), @"cancelled": @(YES) }];
-      } else if ([self _hasListeners:@"error"]) {
-        [self fireEvent:@"login" withObject:@{
-          @"success": @(NO),
-          @"error" : [error localizedDescription],
-          @"code" : @([error code])
-        }];
-      }
-      
-      return;
-    }
-
-    [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
-  }
-}
-
-- (void)signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
-{
-  if ([self _hasListeners:@"logout"]) {
-    [self fireEvent:@"logout"];
-  }
+    DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
+    return nil;
 }
 
 #pragma mark Utilities
+
+- (void)fireLoginEventWithUser:(GIDGoogleUser *)user andError:(NSError *)error
+{
+    if ([self _hasListeners:@"login"]) {
+      if (error != nil) {
+        if (error.code == -5) {
+          [self fireEvent:@"login" withObject:@{ @"success": @(NO), @"cancelled": @(YES) }];
+        } else if ([self _hasListeners:@"error"]) {
+          [self fireEvent:@"login" withObject:@{
+            @"success": @(NO),
+            @"error" : [error localizedDescription],
+            @"code" : @([error code])
+          }];
+        }
+        
+        return;
+      }
+
+      [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+    }
+}
 
 + (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user
 {

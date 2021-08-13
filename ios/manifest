@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 4.2.0
+version: 5.0.0
 apiversion: 2
 architectures: arm64 x86_64
 description: ti.googlesignin
@@ -16,4 +16,4 @@ moduleid: ti.googlesignin
 guid: 7fa817c2-5c36-402b-a442-f2cafd41da64
 platform: iphone
 minsdk: 9.2.0
-mac: false
+mac: true

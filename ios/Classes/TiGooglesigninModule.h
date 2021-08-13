@@ -8,7 +8,9 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 #import <TitaniumKit/TitaniumKit.h>
 
-@interface TiGooglesigninModule : TiModule <GIDSignInDelegate>
+@interface TiGooglesigninModule : TiModule {
+    NSDictionary *signInConfig;
+}
 
 - (void)initialize:(id)args;
 
