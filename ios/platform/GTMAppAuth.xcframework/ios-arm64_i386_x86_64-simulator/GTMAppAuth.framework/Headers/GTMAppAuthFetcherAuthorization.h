@@ -16,12 +16,14 @@
         limitations under the License.
  */
 
-#if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
-@import GTMSessionFetcherCore;
-#elif GTMAPPAUTH_USER_IMPORTS
-#import "GTMSessionFetcher.h"
+#if !defined(__has_include)
+  #error "__has_include not available."
+#elif __has_include(<GTMSessionFetcher/GTMSessionFetcher.h>)
+  #import <GTMSessionFetcher/GTMSessionFetcher.h>
+#elif __has_include("../GTMSessionFetcher.h")
+  #import "../GTMSessionFetcher.h"
 #else
-#import <GTMSessionFetcher/GTMSessionFetcher.h>
+# error "Failed to find GTMSessionFetcher"
 #endif
 
 @class OIDAuthState;
