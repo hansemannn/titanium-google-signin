@@ -3,5 +3,11 @@
 	<modules>
 		<module platform="android" version="17.5.0">ti.playservices</module>
 	</modules>
-	<android xmlns:android="http://schemas.android.com/apk/res/android"></android>
+	<android xmlns:android="http://schemas.android.com/apk/res/android">
+		<manifest>
+			<application>
+				<activity android:name="ti.googlesignin.TiGoogleSignInActivity" />
+			</application>
+		</manifest>
+	</android>
 </ti:module>
