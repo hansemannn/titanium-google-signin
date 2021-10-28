@@ -23,8 +23,10 @@ jobs:
     - name: Install dependencies, build module
       run: |
         npm i -g titanium
-        ti sdk install 9.3.0.GA
+        ti sdk install 10.1.0.GA
         cd ios
         ti build -p ios --build-only
+        cd ../android
+        ti build -p android --build-only
       env:
         CI: true
