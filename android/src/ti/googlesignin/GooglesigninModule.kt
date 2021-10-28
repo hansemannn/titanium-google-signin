@@ -69,17 +69,18 @@ class GooglesigninModule : KrollModule() {
     fun signIn() {
         // Building of intent
         val signInIntent = signInClient?.signInIntent ?: return
+        
+        val intent = Intent(TiApplication.getInstance().currentActivity, TiGoogleSignInActivity::class.java)
+        intent.putExtra("google.sign.in", signInIntent)
 
         // building new activity with result handler
-        val activitySupport = TiApplication
-                .getInstance().currentActivity as TiActivitySupport
+        val activitySupport = TiApplication.getInstance().currentActivity as TiActivitySupport
+
         if (TiApplication.isUIThread()) {
-            activitySupport.launchActivityForResult(signInIntent, RC_SIGN_IN,
-                    SignInResultHandler())
+            activitySupport.launchActivityForResult(intent, RC_SIGN_IN, SignInResultHandler())
         } else {
             TiMessenger.postOnMain {
-                activitySupport.launchActivityForResult(signInIntent,
-                        RC_SIGN_IN, SignInResultHandler())
+                activitySupport.launchActivityForResult(intent, RC_SIGN_IN, SignInResultHandler())
             }
         }
     }
@@ -125,7 +126,7 @@ class GooglesigninModule : KrollModule() {
     }
     
     private inner class SignInResultHandler : TiActivityResultHandler {
-        override fun onError(arg0: Activity, arg1: Int, e: Exception) {
+        override fun onError(activity: Activity, requestCode: Int, e: Exception) {
             fireErrorEvent(e)
         }
 
@@ -133,6 +134,7 @@ class GooglesigninModule : KrollModule() {
             if (requestCode == RC_SIGN_IN) {
                 Log.d(LCAT, "processing sign-in with resultCode: $resultCode")
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
                 when {
                     task.isSuccessful -> {
                         val googleSignInAccount = task.result
