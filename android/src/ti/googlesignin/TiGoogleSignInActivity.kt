@@ -17,14 +17,6 @@ class TiGoogleSignInActivity : Activity() {
 
         signInIntent = intent.getParcelableExtra("google.sign.in")
 
-        // Allow both landscape- and portrait orientations
-        // TODO: Is this correct?
-        var orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT or ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        if (Build.VERSION.SDK_INT >= 9) {
-            orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT or ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        }
-        requestedOrientation = orientation
-
         // Force fullscreen
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
