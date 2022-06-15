@@ -131,7 +131,6 @@ class GooglesigninModule : KrollModule() {
 
         override fun onResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent) {
             if (requestCode == RC_SIGN_IN) {
-                Log.d(LCAT, "processing sign-in with resultCode: $resultCode")
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 when {
                     task.isSuccessful -> {
@@ -144,7 +143,11 @@ class GooglesigninModule : KrollModule() {
                         fireCancelEvent()
                     }
                     else -> {
-                        fireErrorEvent(task.exception)
+                        if (resultCode == Activity.RESULT_OK) {
+                            fireCancelEvent()
+                        } else {
+                            fireErrorEvent(task.exception)
+                        }
                     }
                 }
             }
