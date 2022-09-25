@@ -5,21 +5,21 @@ on: [push]
 jobs:
   build:
 
-    runs-on: macOS-latest
+    runs-on: macos-12
 
     strategy:
       matrix:
         node-version: [16.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Select Xcode 14.x
       run: |
-        sudo xcode-select -s /Applications/Xcode_14.0.app/Contents/Developer
+        sudo xcode-select -s "/Applications/Xcode_14.0.app"
     - name: Install dependencies, build module
       run: |
         npm i -g titanium
