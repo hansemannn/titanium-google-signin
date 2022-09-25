@@ -20,7 +20,7 @@
 //   GTMSessionFetcher* myFirstFetcher = [_fetcherService fetcherWithRequest:request1];
 //   GTMSessionFetcher* mySecondFetcher = [_fetcherService fetcherWithRequest:request2];
 
-#import "GTMSessionFetcher.h"
+#import "GTMSessionFetcher/GTMSessionFetcher.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -67,7 +67,7 @@ extern NSString *const kGTMSessionFetcherServiceSessionKey;
 @property(atomic, copy, nullable) NSDictionary<NSString *, id> *properties;
 @property(atomic, copy, nullable)
     GTMSessionFetcherMetricsCollectionBlock metricsCollectionBlock API_AVAILABLE(
-        ios(10.0), macosx(10.12), tvos(10.0), watchos(3.0));
+        ios(10.0), macosx(10.12), tvos(10.0), watchos(6.0));
 
 #if GTM_BACKGROUND_TASK_FETCHING
 @property(atomic, assign) BOOL skipBackgroundTask;
@@ -80,10 +80,13 @@ extern NSString *const kGTMSessionFetcherServiceSessionKey;
 // To use the configuration's default user agent, set this property to nil.
 @property(atomic, copy, nullable) NSString *userAgent;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
 // The authorizer to attach to the created fetchers. If a specific fetcher should
 // not authorize its requests, the fetcher's authorizer property may be set to nil
 // before the fetch begins.
 @property(atomic, strong, nullable) id<GTMFetcherAuthorizationProtocol> authorizer;
+#pragma clang diagnostic pop
 
 // Delegate queue used by the session when calling back to the fetcher.  The default
 // is the main queue.  Changing this does not affect the queue used to call back to the
@@ -106,6 +109,17 @@ extern NSString *const kGTMSessionFetcherServiceSessionKey;
 // If shouldReuseSession is enabled, this will force creation of a new session when future
 // fetchers begin.
 - (void)resetSession;
+
+// Sets the callback queue, specifying that the provided queue is a concurrent queue.
+//
+// When a concurrent queue is explicitly provided via this setter, then each new fetcher
+// instance created by the service will be provided a new serial queue targeting the
+// concurrent callback queue; this will ensure callbacks for each instance are executed
+// in order, while callbacks from separate fetcher instances are not blocked by each other.
+//
+// The service behavior when resetting the callback queue after providing a concurrent
+// queue is unspecified.
+- (void)setConcurrentCallbackQueue:(dispatch_queue_t)queue;
 
 // Create a fetcher
 //
@@ -142,6 +156,15 @@ extern NSString *const kGTMSessionFetcherServiceSessionKey;
 - (nullable NSArray<GTMSessionFetcher *> *)issuedFetchersWithRequestURL:(NSURL *)requestURL;
 
 - (void)stopAllFetchers;
+
+// Holds a weak reference to `decorator`. When creating a fetcher via
+// `-fetcherWithRequest:fetcherClass:`, each registered `decorator` can inspect and potentially
+// change the fetcher's request before it starts. Decorators are invoked in the order in which
+// they are passed to this method.
+- (void)addDecorator:(id<GTMFetcherDecoratorProtocol>)decorator;
+
+// Removes a `decorator` previously passed to `-removeDecorator:`.
+- (void)removeDecorator:(id<GTMFetcherDecoratorProtocol>)decorator;
 
 // Methods for use by the fetcher class only.
 - (nullable NSURLSession *)session;
@@ -186,14 +209,6 @@ extern NSString *const kGTMSessionFetcherServiceSessionKey;
 // Returns NO if timed out.
 - (BOOL)waitForCompletionOfAllFetchersWithTimeout:(NSTimeInterval)timeoutInSeconds
     __deprecated_msg("Use XCTestExpectation instead");
-
-@end
-
-@interface GTMSessionFetcherService (BackwardsCompatibilityOnly)
-
-// Clients using GTMSessionFetcher should set the cookie storage explicitly themselves.
-// This method is just for compatibility with the old fetcher.
-@property(atomic, assign) NSInteger cookieStorageMethod;
 
 @end
 

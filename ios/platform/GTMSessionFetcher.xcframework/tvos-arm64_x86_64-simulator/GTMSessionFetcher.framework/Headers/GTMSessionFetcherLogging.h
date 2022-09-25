@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#import "GTMSessionFetcher.h"
+#import "GTMSessionFetcher/GTMSessionFetcher.h"
 
 // GTM HTTP Logging
 //
@@ -40,8 +40,6 @@
 // for the latest run of the application; the symlink is called
 //
 //   AppName_http_log_newest.html
-//
-// For better viewing of XML logs, use Camino or Firefox rather than Safari.
 //
 // Each fetcher may be given a comment to be inserted as a label in the logs,
 // such as
@@ -82,10 +80,9 @@
 + (void)setLoggingDateStamp:(NSString *)dateStamp;
 + (NSString *)loggingDateStamp;
 
-// client apps can specify the directory for the log for this specific run,
-// typically to match the directory used by another fetcher class, like:
+// client apps can specify the directory for the log for this specific run:
 //
-//   [GTMSessionFetcher setLogDirectoryForCurrentRun:[GTMHTTPFetcher logDirectoryForCurrentRun]];
+//   [GTMSessionFetcher setLogDirectoryForCurrentRun:logDirectoryPath];
 //
 // Setting this overrides the logging directory, process name, and date stamp when writing
 // the log file.
