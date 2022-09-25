@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [16.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -17,13 +17,13 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Select Xcode 12.x
+    - name: Select Xcode 14.x
       run: |
-        sudo xcode-select -s /Applications/Xcode_12.3.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_14.0.app/Contents/Developer
     - name: Install dependencies, build module
       run: |
         npm i -g titanium
-        ti sdk install 9.3.0.GA
+        ti sdk install 11.1.0.GA
         cd ios
         ti build -p ios --build-only
       env:
