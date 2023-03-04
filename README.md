@@ -52,7 +52,9 @@ The Android setup is made possible by the excellent work from [chmiiller](https:
 ##### ⚠️ PLEASE NOTE!
 
 **You will need to use the Web ClientID from Google instead of an Android one.**
-   
+
+<img src="example/webkey.png" alt="Google Play Console" />
+
 ##### Obtaining a SHA-1 with Titanium
 
 In order to use Google Sign In in your app you will need to provide an SHA-1 certificate fingerprint for Google Console.
