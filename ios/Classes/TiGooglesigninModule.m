@@ -91,17 +91,17 @@
                                                              hostedDomain:hostedDomain
                                                               openIDRealm:openIDRealm];
 
-    if (scopes != nil) {
-        DEPRECATED_REMOVED(@"GoogleSignIn.scopes (removed by Google)", @"5.0.0", @"5.0.0");
-    }
+    //if (scopes != nil) {
+    //    DEPRECATED_REMOVED(@"GoogleSignIn.scopes (removed by Google)", @"5.0.0", @"5.0.0");
+    //}
 
     if (language != nil) {
         DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
     }
 
-    if (loginHint != nil) {
-        DEPRECATED_REMOVED(@"GoogleSignIn.loginHint (removed by Google)", @"5.0.0", @"5.0.0");
-    }
+    //if (loginHint != nil) {
+    //    DEPRECATED_REMOVED(@"GoogleSignIn.loginHint (removed by Google)", @"5.0.0", @"5.0.0");
+    //}
 
     if (shouldFetchBasicProfile != nil) {
         DEPRECATED_REMOVED(@"GoogleSignIn.shouldFetchBasicProfile (removed by Google)", @"5.0.0", @"5.0.0");
@@ -109,6 +109,8 @@
 
     [[GIDSignIn sharedInstance] signInWithConfiguration:config
                              presentingViewController:TiApp.app.controller.topPresentedController
+                                                   hint:loginHint
+                                     additionalScopes:scopes
                                              callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
         [self fireLoginEventWithUser:user andError:error];
     }];
