@@ -82,15 +82,14 @@ Initialize the module by setting the Google SignIn API key you can get from the 
 import GoogleSignIn from 'ti.googlesignin';
 
 GoogleSignIn.initialize({
+    // Required properties
     clientID: '<client-id>',
 
     // Optional properties:
     serverClientID: '<server-client-id>',
     scopes: ['https://www.googleapis.com/auth/plus.login'], // See https://developers.google.com/identity/protocols/googlescopes for more
-    language: 'de', // Or 'de-DE', 'en-US', etc.
     loginHint: 'Titanium rocks!',
     hostedDomain: 'https://my-hosted-domain.com',
-    shouldFetchBasicProfile: false, // Default: true
     openIDRealm: 'my-openID-realm',
 });
 ```
