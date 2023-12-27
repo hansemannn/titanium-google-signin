@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#import "GTMSessionFetcher.h"
+#import "GTMSessionFetcher/GTMSessionFetcher.h"
 
 // GTM HTTP Logging
 //
@@ -40,8 +40,6 @@
 // for the latest run of the application; the symlink is called
 //
 //   AppName_http_log_newest.html
-//
-// For better viewing of XML logs, use Camino or Firefox rather than Safari.
 //
 // Each fetcher may be given a comment to be inserted as a label in the logs,
 // such as
