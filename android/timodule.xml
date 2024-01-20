@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:module xmlns:ti="http://ti.appcelerator.org" xmlns:android="http://schemas.android.com/apk/res/android">
 	<modules>
-		<module platform="android" version="17.5.0">ti.playservices</module>
+		<module platform="android">ti.playservices</module>
 	</modules>
 	<android xmlns:android="http://schemas.android.com/apk/res/android"></android>
 </ti:module>
