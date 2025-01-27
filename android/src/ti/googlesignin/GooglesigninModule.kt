@@ -8,40 +8,32 @@
  */
 package ti.googlesignin
 
-import android.app.Activity
-import android.content.Intent
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import android.os.CancellationSignal
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import org.appcelerator.kroll.KrollDict
 import org.appcelerator.kroll.KrollModule
 import org.appcelerator.kroll.annotations.Kroll
-import org.appcelerator.kroll.annotations.Kroll.*
+import org.appcelerator.kroll.annotations.Kroll.method
+import org.appcelerator.kroll.annotations.Kroll.module
 import org.appcelerator.kroll.common.Log
 import org.appcelerator.kroll.common.TiMessenger
 import org.appcelerator.titanium.TiApplication
-import org.appcelerator.titanium.util.TiActivityResultHandler
-import org.appcelerator.titanium.util.TiActivitySupport
-import java.util.*
 
 
 @module(name = "Googlesignin", id = "ti.googlesignin")
 class GooglesigninModule : KrollModule() {
-    private var signInClient: GoogleSignInClient? = null
+    var cancellationSignal: CancellationSignal? = null
 
-    override fun onStart(activity: Activity) {
-        super.onStart(activity)
-        val account = GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity())
+    companion object {
+        const val LCAT = "TiGoogleSignIn"
+        @Kroll.constant val LOGIN_TYPE_DIALOG = "LOGIN_TYPE_DIALOG"
+        @Kroll.constant val LOGIN_TYPE_SHEET = "LOGIN_TYPE_SHEET"
 
-        // Check if already logged in
-        if (account != null) {
-            fireLoginEvent(account)
-        } else {
-            signInSilently()
-        }
+        @Kroll.constant val ERROR_TYPE_UNKNOWN = "ERROR_TYPE_UNKNOWN"
+        @Kroll.constant val ERROR_TYPE_NO_CREDENTIAL = "ERROR_TYPE_NO_CREDENTIAL"
+        @Kroll.constant val ERROR_TYPE_TOKEN_PARSING = "ERROR_TYPE_TOKEN_PARSING"
+        @Kroll.constant val ERROR_TYPE_INTERRUPTED = "ERROR_TYPE_INTERRUPTED"
+        @Kroll.constant val ERROR_TYPE_CANCELLED = "ERROR_TYPE_CANCELLED"
     }
 
     @method
@@ -50,170 +42,81 @@ class GooglesigninModule : KrollModule() {
             Log.e(LCAT, "Missing required \"clientID\" property!")
             return
         }
-        val options = GoogleSignInOptions.Builder(
-                GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(opts.getString("clientID"))
-                .requestProfile()
-                .requestEmail()
-                .build()
 
-        signInClient = GoogleSignIn.getClient(TiApplication.getAppCurrentActivity(), options)
+        TiCredentialManager.apiKey = opts.getString("clientID")
     }
 
     @method
-    fun hasAuthInKeychain(): Boolean {
-        return GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity()) != null
+    fun cancel(): Boolean {
+        cancellationSignal?.cancel()
+        return cancellationSignal?.isCanceled ?: false
     }
 
     @method
-    fun signIn() {
-        // Building of intent
-        val signInIntent = signInClient?.signInIntent ?: return
+    fun signIn(@Kroll.argument(optional = true)params: KrollDict?) {
+        // Create cancellation signal here to pass further and to be controlled from JS side using this class itself.
+        cancellationSignal = CancellationSignal()
 
-        // building new activity with result handler
-        val activitySupport = TiApplication
-                .getInstance().currentActivity as TiActivitySupport
         if (TiApplication.isUIThread()) {
-            activitySupport.launchActivityForResult(signInIntent, RC_SIGN_IN,
-                    SignInResultHandler())
+            TiCredentialManager.googleSignIn(this, params)
         } else {
             TiMessenger.postOnMain {
-                activitySupport.launchActivityForResult(signInIntent,
-                        RC_SIGN_IN, SignInResultHandler())
-            }
-        }
-    }
-
-    @method
-    fun signInSilently() {
-        signInClient?.silentSignIn()?.addOnCompleteListener(TiApplication.getAppCurrentActivity()) { task: Task<GoogleSignInAccount?> ->
-            if (task.isSuccessful) {
-                task.result?.let {
-                    fireLoginEvent(it)
-                }
+                TiCredentialManager.googleSignIn(this, params)
             }
         }
     }
 
     @method
     fun signOut() {
-        if (!hasAuthInKeychain()) {
-            Log.e(LCAT, "Not currently logged in. Make sure to check with \"TiGoogleSignIn.hasAuthInKeychain()\" before calling this method");
-            return
-        }
-
-        signInClient?.signOut()?.addOnCompleteListener(TiApplication.getAppCurrentActivity()) {
-            if (it.isSuccessful) {
-                fireEvent("logout", KrollDict())
-            }
-        }
+        TiCredentialManager.signOut(this)
     }
 
-    @method
-    fun disconnect() {
-        signInClient?.revokeAccess()?.addOnCompleteListener(TiApplication.getAppCurrentActivity(), OnCompleteListener {
-            if (it.isSuccessful) {
-                fireEvent("disconnect", KrollDict())
-            }
-        })
+    fun fireLogoutEvent(success: Boolean = false, error: String = "") {
+        val result = KrollDict()
+        result["error"] = error
+        result["success"] = success
+        fireEvent("logout", result)
     }
 
-    @getProperty
-    fun currentUser(): KrollDict? {
-        val user = GoogleSignIn.getLastSignedInAccount(TiApplication.getAppCurrentActivity()) ?: return null
-        return currentUserAsKrollDict(user)
-    }
-    
-    private inner class SignInResultHandler : TiActivityResultHandler {
-        override fun onError(arg0: Activity, arg1: Int, e: Exception) {
-            fireErrorEvent(e)
-        }
-
-        override fun onResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent) {
-            if (requestCode == RC_SIGN_IN) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                when {
-                    task.isSuccessful -> {
-                        val googleSignInAccount = task.result
-                        googleSignInAccount?.let {
-                            fireLoginEvent(it)
-                        }
-                    }
-                    task.isCanceled -> {
-                        fireCancelEvent()
-                    }
-                    else -> {
-                        if (resultCode == Activity.RESULT_OK) {
-                            fireCancelEvent()
-                        } else {
-                            fireErrorEvent(task.exception)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun fireCancelEvent() {
+    fun fireLoginEvent(
+        credential: GoogleIdTokenCredential? = null,
+        cancelled: Boolean = false,
+        errorType: String = ERROR_TYPE_UNKNOWN,
+        error: Exception? = null)
+    {
         val event = KrollDict()
 
-        event["cancelled"] = true
-        event["success"] = false
+        if (credential == null) {
+            event["error"] = error?.localizedMessage ?: "Unknown error"
+            event["errorType"] = errorType
+        }
+
+        event["cancelled"] = cancelled
+        event["success"] = credential != null
+        event["user"] = credential?.let { parseUserCredentials(it) }
 
         fireEvent("login", event)
     }
 
-    private fun fireErrorEvent(exception: Exception?) {
-        val event = KrollDict()
-
-        event["error"] = if (exception != null) exception.localizedMessage else "unknown exception"
-        event["success"] = false
-
-        fireEvent("error", event)
-    }
-
-    private fun fireLoginEvent(googleSignInAccount: GoogleSignInAccount) {
-        val event = KrollDict()
-
-        event["user"] = currentUserAsKrollDict(googleSignInAccount)
-        event["cancelled"] = false
-        event["success"] = true
-
-        fireEvent("login", event)
-    }
-
-    private fun currentUserAsKrollDict(googleSignInAccount: GoogleSignInAccount): KrollDict {
+    private fun parseUserCredentials(googleIdTokenCredential: GoogleIdTokenCredential): KrollDict {
         val user = KrollDict()
-        val profile = KrollDict()
-        val auth = KrollDict()
-        val scopes = ArrayList<String>()
 
-        for (scope in googleSignInAccount.grantedScopes) {
-            scopes.add(scope.toString())
+        googleIdTokenCredential.let {
+            val auth = KrollDict()
+            auth["idToken"] = it.idToken
+
+            val profile = KrollDict()
+            profile["familyName"] = it.familyName ?: ""
+            profile["givenName"] = it.givenName ?: ""
+            profile["name"] = it.displayName ?: ""
+            profile["displayName"] = it.displayName ?: ""
+            profile["email"] = it.id
+            profile["image"] = it.profilePictureUri?.toString() ?: ""
+
+            user["profile"] = profile
+            user["authentication"] = auth
         }
-
-        profile["familyName"] = googleSignInAccount.familyName
-        profile["givenName"] = googleSignInAccount.givenName
-        profile["accountName"] = googleSignInAccount.account?.name
-        profile["name"] = googleSignInAccount.displayName
-        profile["displayName"] = googleSignInAccount.displayName
-        profile["email"] = googleSignInAccount.email
-        profile["image"] = googleSignInAccount.photoUrl.toString()
-        profile["accountType"] = googleSignInAccount.account?.type
-        profile["accountString"] = googleSignInAccount.account.toString()
-
-        auth["idToken"] = googleSignInAccount.idToken
-        user["id"] = googleSignInAccount.id
-        user["scopes"] = scopes.toTypedArray()
-        user["serverAuthCode"] = googleSignInAccount.serverAuthCode
-        user["profile"] = profile
-        user["authentication"] = auth
 
         return user
-    }
-
-    companion object {
-        const val LCAT = "TiGoogleSignIn"
-        private const val RC_SIGN_IN = 9001
     }
 }
