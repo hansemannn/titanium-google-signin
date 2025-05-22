@@ -32,7 +32,7 @@ object TiCredentialManager {
     private lateinit var credentialManager: CredentialManager
 
     private fun getContext(): Context {
-        return TiApplication.getAppCurrentActivity().baseContext
+        return TiApplication.getAppRootOrCurrentActivity()
     }
 
     private fun createCredentialManager() {

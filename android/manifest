@@ -15,4 +15,4 @@ name: googlesignin
 moduleid: ti.googlesignin
 guid: d548b85b-bfcb-43c5-a13d-a63d148ba8a0
 platform: android
-minsdk: 12.6.1
+minsdk: 12.7.0.GA
