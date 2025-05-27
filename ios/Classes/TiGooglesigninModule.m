@@ -79,11 +79,9 @@
 
     ENSURE_TYPE(clientID, NSString);
     ENSURE_TYPE_OR_NIL(scopes, NSArray);
-    ENSURE_TYPE_OR_NIL(language, NSString);
     ENSURE_TYPE_OR_NIL(loginHint, NSString);
     ENSURE_TYPE_OR_NIL(hostedDomain, NSString);
     ENSURE_TYPE_OR_NIL(serverClientID, NSString);
-    ENSURE_TYPE_OR_NIL(shouldFetchBasicProfile, NSNumber);
     ENSURE_TYPE_OR_NIL(openIDRealm, NSString);
 
     GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientID
@@ -91,29 +89,20 @@
                                                              hostedDomain:hostedDomain
                                                               openIDRealm:openIDRealm];
 
-    if (language != nil) {
-        DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
-    }
-
-    if (shouldFetchBasicProfile != nil) {
-        DEPRECATED_REMOVED(@"GoogleSignIn.shouldFetchBasicProfile (removed by Google)", @"5.0.0", @"5.0.0");
-    }
-
-    [[GIDSignIn sharedInstance] signInWithConfiguration:config
-                             presentingViewController:TiApp.app.controller.topPresentedController
-                                                   hint:loginHint
-                                     additionalScopes:scopes
-                                             callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        [self fireLoginEventWithUser:user andError:error];
-    }];
+  [[GIDSignIn sharedInstance] signInWithPresentingViewController:TiApp.app.controller.topPresentedController
+                                                            hint:loginHint
+                                                additionalScopes:scopes
+                                                      completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+    [self fireLoginEventWithUser:signInResult.user andServerAuthCode:signInResult.serverAuthCode error:error];
+  }];
 }
 
 - (void)signInSilently:(id)unused
 {
   ENSURE_UI_THREAD(signInSilently, unused);
-    [[GIDSignIn sharedInstance] restorePreviousSignInWithCallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        [self fireLoginEventWithUser:user andError:error];
-    }];
+  [[GIDSignIn sharedInstance] restorePreviousSignInWithCompletion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+    [self fireLoginEventWithUser:user andServerAuthCode:nil error:error];
+  }];
 }
 
 - (void)signOut:(id)unused
@@ -125,11 +114,11 @@
 - (void)disconnect:(id)unused
 {
     ENSURE_UI_THREAD(disconnect, unused);
-    [[GIDSignIn sharedInstance] disconnectWithCallback:^(NSError * _Nullable error) {
-        if ([self _hasListeners:@"logout"]) {
-            [self fireEvent:@"logout" withObject:@{ @"success": @(error == nil), @"error": NULL_IF_NIL(error.localizedDescription) }];
-        }
-    }];
+  [[GIDSignIn sharedInstance] disconnectWithCompletion:^(NSError * _Nullable error) {
+    if ([self _hasListeners:@"logout"]) {
+        [self fireEvent:@"logout" withObject:@{ @"success": @(error == nil), @"error": NULL_IF_NIL(error.localizedDescription) }];
+    }
+  }];
 }
 
 - (NSNumber *)hasAuthInKeychain:(id)unused
@@ -140,7 +129,7 @@
 - (NSDictionary *)currentUser
 {
   ENSURE_LOGGED_IN
-  return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser]];
+  return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser] andServerAuthCode:nil];
 }
 
 - (NSString *)currentUserImageURLWithSize:(id)size
@@ -151,20 +140,9 @@
   return [[[[[GIDSignIn sharedInstance] currentUser] profile] imageURLWithDimension:[TiUtils intValue:size]] absoluteString];
 }
 
-- (void)setLanguage:(NSString *)language
-{
-    DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
-}
-
-- (NSString *)language
-{
-    DEPRECATED_REMOVED(@"GoogleSignIn.language (removed by Google)", @"5.0.0", @"5.0.0");
-    return nil;
-}
-
 #pragma mark Utilities
 
-- (void)fireLoginEventWithUser:(GIDGoogleUser *)user andError:(NSError *)error
+- (void)fireLoginEventWithUser:(GIDGoogleUser *)user andServerAuthCode:(NSString *)serverAuthCode error:(NSError *)error
 {
     if ([self _hasListeners:@"login"]) {
       if (error != nil) {
@@ -181,31 +159,35 @@
         return;
       }
 
-      [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+      [self fireEvent:@"login" withObject:@{
+        @"success": @(YES),
+        @"cancelled": @(NO),
+        @"user" : [TiGooglesigninModule dictionaryFromUser:user andServerAuthCode:serverAuthCode]
+      }];
     }
 }
 
-+ (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user
++ (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user andServerAuthCode:(NSString *)serverAuthCode
 {
   return @{
     @"id" : user.userID,
     @"scopes" : NULL_IF_NIL(user.grantedScopes),
-    @"serverAuthCode" : NULL_IF_NIL(user.serverAuthCode),
-    @"hostedDomain" : NULL_IF_NIL(user.hostedDomain),
+    @"serverAuthCode": NULL_IF_NIL(serverAuthCode),
+    @"hostedDomain" : NULL_IF_NIL(user.configuration.hostedDomain),
     @"profile" : @{
       @"name" : NULL_IF_NIL(user.profile.name),
       @"givenName" : NULL_IF_NIL(user.profile.givenName),
       @"familyName" : NULL_IF_NIL(user.profile.familyName),
       @"email" : NULL_IF_NIL(user.profile.email),
-      @"hasImage" : @(user.profile.hasImage)
+      @"hasImage" : @(user.profile.hasImage),
     },
     @"authentication" : @{
-      @"clientID" : NULL_IF_NIL(user.authentication.clientID),
-      @"accessToken" : NULL_IF_NIL(user.authentication.accessToken),
-      @"accessTokenExpirationDate" : NULL_IF_NIL(user.authentication.accessTokenExpirationDate),
-      @"refreshToken" : NULL_IF_NIL(user.authentication.refreshToken),
-      @"idToken" : NULL_IF_NIL(user.authentication.idToken),
-      @"idTokenExpirationDate" : NULL_IF_NIL(user.authentication.idTokenExpirationDate)
+      @"clientID" : NULL_IF_NIL(user.configuration.clientID),
+      @"serverClientID" : NULL_IF_NIL(user.configuration.serverClientID),
+      @"accessToken" : NULL_IF_NIL(user.accessToken),
+      @"refreshToken" : NULL_IF_NIL(user.refreshToken),
+      @"idToken" : NULL_IF_NIL(user.idToken),
+      @"openIDRealm": NULL_IF_NIL(user.configuration.openIDRealm)
     }
   };
 }
