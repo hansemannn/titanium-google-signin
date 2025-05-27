@@ -131,6 +131,41 @@ GoogleSignIn.initialize({
 
 The login event also includes the current user via the `user` property.
 
+### Android Module v8.0.0 Changes:
+- **Breaking**: Requires `compileSdkVersion: 34`, supported by Titanium SDK `12.7.0.GA`, or backported to `12.6.x` via [this PR](https://github.com/tidev/titanium-sdk/pull/14200).
+- Added `cancel() –> Boolean` method to cancel the ongoing sign-in flow. Returns `true` if cancelled successfully.
+- `signIn()` now supports following properties:
+    - `loginType`
+        - `LOGIN_TYPE_DIALOG` - to show old dialog based sign-in.
+        - `LOGIN_TYPE_SHEET` - to show new bottom sheet based sign-in.
+    - `filterByAuthorizedAccounts` - [read more here](https://developers.google.com/identity/android-credential-manager/android/reference/com/google/android/libraries/identity/googleid/GetGoogleIdOption.Builder) for these new properties
+    - `autoSelectEnabled`
+    - `requestVerifiedPhoneNumber`
+    - `nonce`
+- Removed:
+   - `hasAuthInKeychain()`
+   - `signInSilently()`
+   - `disconnect()`
+   - `currentUser` property
+   - `error` event, use `success` property from `login` event (parity with iOS).
+- `login` event changes:
+    - use `success` property to check for a successful sign-in or an error.
+    - `user.profile` only have:
+        - name
+        - email
+        - image
+        - givenName
+        - familyName
+        - displayName
+    - `user.authentication` only have:
+        - idToken
+    - Added new `errorType`:
+        - `ERROR_TYPE_UNKNOWN`
+        - `ERROR_TYPE_NO_CREDENTIAL`
+        - `ERROR_TYPE_TOKEN_PARSING`
+        - `ERROR_TYPE_INTERRUPTED`
+        - `ERROR_TYPE_CANCELLED`
+
 ### Build
 
 If you want to build the module from the source, you need to check some things beforehand:
