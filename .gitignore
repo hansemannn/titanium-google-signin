@@ -25,3 +25,4 @@ ios/ti.googlesignin.xcodeproj/xcuserdata
 /ios/dist
 ios/ti.googlesignin-iphone-*.zip
 android/dist
+/android/.gradle
