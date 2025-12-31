@@ -57,20 +57,32 @@ The Android setup is made possible by the excellent work from [chmiiller](https:
 
 ##### Obtaining a SHA-1 with Titanium
 
-In order to use Google Sign In in your app you will need to provide an SHA-1 certificate fingerprint for Google Console.
-You will need to provide a debug and a distribution SHA-1 fingerprint for your app. On Titanium, the debug SHA-1
-has to be generated from the `dev_keystore` file from your Titanium SDK android folder located at "mobilesdk/<platform>/<sdk_version>/android/dev_keystore".
-On macOS for example it would rely on: "~/Library/Application\ Support/Titanium/mobilesdk/osx/9.3.0.GA/android/dev_keystore".   
+##### ⚠️ HELPER!
+You can use the [titanium-google-signin-diagnose.sh](https://github.com/hansemannn/titanium-google-signin/blob/master/android/example/titanium-google-signin-diagnose.sh) to assist you on creating the fingerprints for the Firebase Console.
+
+A comprehensive diagnostic tool that automatically extracts SHA-1/SHA-256 fingerprints from all Android keystores (debug, Titanium SDK, and production) and provides step-by-step Firebase Console setup instructions for Google Sign-In integration in Titanium apps.
+
+##### If you want to it manually:
+In order to use Google Sign In in your app you will need to provide an SHA-1 certificate fingerprint to Firebase Console.
+You will need to provide a debug and a distribution SHA-1 fingerprint for your app. 
+
+On Titanium, the debug SHA-1 has to be generated from the `dev_keystore` file from your Titanium SDK android folder located at "mobilesdk/<platform>/<sdk_version>/android/dev_keystore".
+
+On macOS, for example, it would rely on: "~/Library/Application\ Support/Titanium/mobilesdk/osx/13.0.0.GA/android/dev_keystore".   
+
 And an command line example for it would be:   
 ```
-keytool -list -v -keystore ~/Library/Application\ Support/Titanium/mobilesdk/osx/9.3.0.GA/android/dev_keystore
+keytool -list -v -keystore ~/Library/Application\ Support/Titanium/mobilesdk/osx/13.0.0.GA/android/dev_keystore
 ```   
 
-You can follow same instructions used to configure a map in your Android app from [Appcelerator Docs](http://docs.appcelerator.com/platform/latest/#!/guide/Google_Maps_v2_for_Android-section-src-36739898_GoogleMapsv2forAndroid-ObtainandAddaGoogleAPIKey).   
+You can also follow same instructions used to configure a map in your Android app from [Titanium Docs](https://titaniumsdk.com/guide/Titanium_SDK/Titanium_SDK_How-tos/Location_Services/Google_Maps_v2_for_Android.html#obtain-and-add-a-google-api-key).   
 
-This repo also [includes a video](https://github.com/AppWerft/Ti.GoogleSignIn/blob/master/example/How%20to%20create%20Android%20keys.mov) on how to create an Android app on Firebase and Google Developers Console to better explain the process.   
-As Appcelerator's documentation recommends, when submitting your app to Google Play Store you will need to create a production .keystore file, so don't forget to create another SHA-1 for this key and remember to add it also as another "fingerprint" on Firebase.   
+This repo also [includes a video](https://www.youtube.com/watch?v=eNE-sLmcJGs) on how to create an Android app on Firebase to better explain the process.   
+
+As Titanium's documentation recommends, when submitting your app to Google Play Store you will need to create a production .keystore file, so don't forget to create another SHA-1 for this key and remember to add it also as another "fingerprint" on Firebase.   
+
 Note that some users have reported problems when submitting new apps to the Play Store, where the Google Login stop working on production. A solution found was to get another SHA-1 fingerprint from the Google Play app's dashboard and add this fingerprint to Firebase.
+
 These fingerprints could be found on your Google Play Console, under the "Release Management" menu on the left and then on "App signing".
 Here is an example on how it looks like:   
 <img src="example/play_store_sha1.png" width="483" alt="Google Play Console" />   
@@ -106,10 +118,10 @@ GoogleSignIn.initialize({
 
 * [x] `language` (String, `get|set`, iOS, only)
 * [x] `currentUser` (Dictionary, `get`)
-    * `id` (String) 
-    * `scopes` (Array<String>) 
-    * `serverAuthCode` (String) 
-    * `hostedDomain` (String) 
+    * `id` (String) 
+    * `scopes` (Array<String>) 
+    * `serverAuthCode` (String) 
+    * `hostedDomain` (String) 
     * `profile` (Dictionary)
         * `name` (String)
         * `givenName` (String)

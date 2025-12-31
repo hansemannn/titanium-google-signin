@@ -41,28 +41,47 @@ class GooglesigninModule : KrollModule() {
 
     @method
     fun initialize(opts: KrollDict) {
+        Log.d(LCAT, "=== Google Sign In Initialize ===")
+
         if (!opts.containsKeyAndNotNull("clientID")) {
             Log.e(LCAT, "Missing required \"clientID\" property!")
             return
         }
 
-        TiCredentialManager.apiKey = opts.getString("clientID")
+        val clientID = opts.getString("clientID")
+        Log.d(LCAT, "Client ID: $clientID")
+        TiCredentialManager.apiKey = clientID
+
+        Log.d(LCAT, "Initialization complete")
     }
 
     @method
     fun cancel(): Boolean {
+        Log.d(LCAT, "Cancel requested")
         cancellationSignal?.cancel()
         return cancellationSignal?.isCanceled ?: false
     }
 
     @method
     fun signIn(@Kroll.argument(optional = true)params: KrollDict?) {
+        Log.d(LCAT, "=== Sign In Requested ===")
+
+        // Log parameters if provided
+        params?.let {
+            Log.d(LCAT, "Parameters:")
+            for (key in it.keys) {
+                Log.d(LCAT, "  - $key: ${it.get(key)}")
+            }
+        }
+
         // Create cancellation signal here to pass further and to be controlled from JS side using this class itself.
         cancellationSignal = CancellationSignal()
 
         if (TiApplication.isUIThread()) {
+            Log.d(LCAT, "Running on UI thread")
             TiCredentialManager.googleSignIn(this, params)
         } else {
+            Log.d(LCAT, "Posting to UI thread")
             TiMessenger.postOnMain {
                 TiCredentialManager.googleSignIn(this, params)
             }
@@ -71,10 +90,17 @@ class GooglesigninModule : KrollModule() {
 
     @method
     fun signOut() {
+        Log.d(LCAT, "=== Sign Out Requested ===")
         TiCredentialManager.signOut(this)
     }
 
     fun fireLogoutEvent(success: Boolean = false, error: String = "") {
+        Log.d(LCAT, "=== Logout Event ===")
+        Log.d(LCAT, "Success: $success")
+        if (error.isNotEmpty()) {
+            Log.e(LCAT, "Error: $error")
+        }
+
         val result = KrollDict()
         result["error"] = error
         result["success"] = success
@@ -87,11 +113,58 @@ class GooglesigninModule : KrollModule() {
         errorType: String = ERROR_TYPE_UNKNOWN,
         error: Exception? = null)
     {
+        Log.d(LCAT, "=== Login Event ===")
+
         val event = KrollDict()
 
         if (credential == null) {
-            event["error"] = error?.localizedMessage ?: "Unknown error"
+            val errorMessage = error?.localizedMessage ?: "Unknown error"
+            event["error"] = errorMessage
             event["errorType"] = errorType
+
+            // Log detalhado do erro
+            Log.e(LCAT, "Google login FAILED:")
+            Log.e(LCAT, "  - Error Type: $errorType")
+            Log.e(LCAT, "  - Error Message: $errorMessage")
+            Log.e(LCAT, "  - Cancelled: $cancelled")
+
+            if (error != null) {
+                Log.e(LCAT, "  - Exception Class: ${error.javaClass.name}")
+                Log.e(LCAT, "  - Exception Message: ${error.message}")
+
+                // Stack trace completo
+                Log.e(LCAT, "  - Full Stack Trace:")
+                error.stackTrace.forEach { element ->
+                    Log.e(LCAT, "      at $element")
+                }
+
+                // Causa raiz
+                error.cause?.let { cause ->
+                    Log.e(LCAT, "  - Caused By: ${cause.javaClass.name}")
+                    Log.e(LCAT, "    Message: ${cause.message}")
+                    cause.stackTrace.take(5).forEach { element ->
+                        Log.e(LCAT, "      at $element")
+                    }
+                }
+
+                // Exceções suprimidas
+                if (error.suppressed.isNotEmpty()) {
+                    Log.e(LCAT, "  - Suppressed Exceptions:")
+                    error.suppressed.forEach { suppressed ->
+                        Log.e(LCAT, "    - ${suppressed.javaClass.name}: ${suppressed.message}")
+                    }
+                }
+            } else {
+                Log.e(LCAT, "  - No exception provided!")
+            }
+        } else {
+            Log.d(LCAT, "Google login SUCCESSFUL!")
+            Log.d(LCAT, "  - User ID (email): ${credential.id}")
+            Log.d(LCAT, "  - Display Name: ${credential.displayName}")
+            Log.d(LCAT, "  - Given Name: ${credential.givenName}")
+            Log.d(LCAT, "  - Family Name: ${credential.familyName}")
+            Log.d(LCAT, "  - Profile Picture: ${credential.profilePictureUri}")
+            Log.d(LCAT, "  - ID Token length: ${credential.idToken.length}")
         }
 
         event["cancelled"] = cancelled
