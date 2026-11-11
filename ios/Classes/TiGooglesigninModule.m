@@ -68,9 +68,14 @@
   }
 }
 
-- (void)signIn:(id)unused
+- (void)signIn:(id)args
 {
-  ENSURE_UI_THREAD(signIn, unused);
+  ENSURE_UI_THREAD(signIn, args);
+
+    NSDictionary *params = nil;
+    ENSURE_ARG_OR_NIL_AT_INDEX(params, args, 0, NSDictionary);
+    id nonce = [params objectForKey:@"nonce"];
+    ENSURE_TYPE_OR_NIL(nonce, NSString);
     
     id clientID = [signInConfig objectForKey:@"clientID"];
     id scopes = [signInConfig objectForKey:@"scopes"];
@@ -112,6 +117,7 @@
     [[GIDSignIn sharedInstance] signInWithPresentingViewController:TiApp.app.controller.topPresentedController
                                                               hint:loginHint
                                                   additionalScopes:scopes
+                                                             nonce:nonce
                                                         completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
         [self fireLoginEventWithUser:signInResult.user serverAuthCode:signInResult.serverAuthCode andError:error];
     }];

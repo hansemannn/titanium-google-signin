@@ -102,7 +102,9 @@ GoogleSignIn.initialize({
 ```
 #### Methods
 
-- [x] `signIn()`
+- [x] `signIn(params)`
+    * `nonce` (String, optional): included unchanged in the `nonce` claim of the returned ID token, so your
+      server can check that the token was issued for this sign-in (iOS 8.1.0+; Android since 8.0.0)
 - [x] `signInSilently()`
 - [x] `signOut()`
 - [x] `disconnect()`
