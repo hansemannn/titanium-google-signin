@@ -34,17 +34,32 @@ NS_ASSUME_NONNULL_BEGIN
 API_UNAVAILABLE(macCatalyst)
 @interface OIDExternalUserAgentIOS : NSObject<OIDExternalUserAgent>
 
-- (nullable instancetype)init API_AVAILABLE(ios(11))
+- (null_unspecified instancetype)init API_AVAILABLE(ios(11))
     __deprecated_msg("This method will not work on iOS 13, use "
                      "initWithPresentingViewController:presentingViewController");
 
 /*! @brief The designated initializer.
-    @param presentingViewController The view controller from which to present the
-        \SFSafariViewController.
+    @param presentingViewController The view controller from which to present the authentication UI.
+    @discussion The specific authentication UI used depends on the iOS version and accessibility
+        options. Uses @c ASWebAuthenticationSession. If Guided Access is enabled or the session
+        cannot be started, the method returns NO and the authorization flow fails with an error.
  */
 - (nullable instancetype)initWithPresentingViewController:
     (UIViewController *)presentingViewController
     NS_DESIGNATED_INITIALIZER;
+
+/*! @brief Create an external user-agent which optionally uses a private authentication session.
+    @param presentingViewController The view controller from which to present the browser.
+    @param prefersEphemeralSession Whether the caller prefers to use a private authentication
+        session. See @c ASWebAuthenticationSession.prefersEphemeralWebBrowserSession for more.
+    @discussion Authentication is performed with @c ASWebAuthenticationSession, setting the
+        ephemerality based on the argument. If Guided Access is enabled or the session cannot
+        be started, the method returns NO and the authorization flow fails with an error.
+ */
+- (nullable instancetype)initWithPresentingViewController:
+    (UIViewController *)presentingViewController
+                                  prefersEphemeralSession:(BOOL)prefersEphemeralSession
+    API_AVAILABLE(ios(13));
 
 @end
 

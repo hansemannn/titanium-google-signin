@@ -14,7 +14,7 @@
 
 - (void)initialize:(id)args;
 
-- (void)signIn:(id)unused;
+- (void)signIn:(id)args;
 
 - (void)signInSilently:(id)unused;
 

@@ -24,8 +24,8 @@
 // To the client, the only fetcher that exists is this class; the subsidiary
 // fetchers needed for uploading chunks are not visible (though the most recent
 // chunk fetcher may be accessed via the -activeFetcher or -chunkFetcher methods, and
-// -responseHeaders and -statusCode reflect results from the most recent chunk
-// fetcher.)
+// -responseHeaders and -statusCode reflect results from the most recent
+// server response, regardless of how the upload completes or is interrupted.)
 //
 // Chunk fetchers are discarded as soon as they have completed.
 //
@@ -37,8 +37,8 @@
 // only be used from the main thread until further work is done to make this subclass
 // thread-safe.
 
-#import "GTMSessionFetcher.h"
-#import "GTMSessionFetcherService.h"
+#import "GTMSessionFetcher/GTMSessionFetcher.h"
+#import "GTMSessionFetcher/GTMSessionFetcherService.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -57,6 +57,8 @@ extern int64_t const kGTMSessionUploadFetcherMaximumDemandBufferSize;
 
 // Notification that the upload location URL was provided by the server.
 extern NSString *const kGTMSessionFetcherUploadLocationObtainedNotification;
+// Notification that the exponential backoff for upload has started.
+extern NSString *const kGTMSessionFetcherUploadInitialBackoffStartedNotification;
 
 // Block to provide data during uploads.
 //
@@ -133,6 +135,10 @@ typedef void (^GTMSessionUploadFetcherCancellationHandler)(GTMSessionFetcher *_N
 @property(atomic, copy) NSString *uploadMIMEType;
 @property(atomic, readonly, assign) int64_t chunkSize;
 @property(atomic, readonly, assign) int64_t currentOffset;
+@property(atomic, assign) double uploadRetryFactor;
+@property(atomic, assign) NSTimeInterval maxUploadRetryInterval;
+@property(atomic, assign) NSTimeInterval minUploadRetryInterval;
+
 // Reflects the original NSURLRequest's @c allowCellularAccess property.
 @property(atomic, readonly, assign) BOOL allowsCellularAccess;
 
@@ -155,7 +161,7 @@ typedef void (^GTMSessionUploadFetcherCancellationHandler)(GTMSessionFetcher *_N
 //
 // Unlike other callbacks, since this is related specifically to the stopFetching flow it is not
 // cleared by stopFetching. It will instead clear itself after it is invoked or if the completion
-// has occured before stopFetching is called.
+// has occurred before stopFetching is called.
 @property(atomic, copy, nullable) GTMSessionUploadFetcherCancellationHandler cancellationHandler;
 
 // Exposed for testing only.

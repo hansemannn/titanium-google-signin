@@ -1,0 +1,317 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.4 effective-5.10 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name AppCheckCore
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4
+@_exported import AppCheckCore
+import CommonCrypto
+import DeviceCheck
+import Foundation
+import GoogleUtilities
+@preconcurrency import RecaptchaInterop
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public typealias AppCheckCoreTokenHandler = (AppCheckCore::AppCheckCoreTokenResult) -> Swift::Void
+@objc(GACAppCheckProtocol) public protocol AppCheckCoreProtocol : ObjectiveC::NSObjectProtocol {
+  @objc(tokenForcingRefresh:completion:) func token(forcingRefresh: Swift::Bool, completion: @escaping AppCheckCore::AppCheckCoreTokenHandler)
+  @objc(limitedUseTokenWithCompletion:) func limitedUseToken(completion: @escaping AppCheckCore::AppCheckCoreTokenHandler)
+}
+@_hasMissingDesignatedInitializers @objc(GACAppCheck) public class AppCheckCore : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreProtocol {
+  @objc(initWithServiceName:resourceName:appCheckProvider:settings:tokenDelegate:keychainAccessGroup:) public init(serviceName: Swift::String, resourceName: Swift::String, appCheckProvider: any AppCheckCore::AppCheckCoreProvider, settings: any AppCheckCore::AppCheckCoreSettingsProtocol, tokenDelegate: (any AppCheckCore::AppCheckCoreTokenDelegate)?, keychainAccessGroup: Swift::String?)
+  public func token(forcingRefresh: Swift::Bool) async throws -> AppCheckCore::AppCheckCoreToken
+  @objc(tokenForcingRefresh:completion:) public func token(forcingRefresh: Swift::Bool, completion: @escaping AppCheckCore::AppCheckCoreTokenHandler)
+  public func limitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+  @objc(limitedUseTokenWithCompletion:) public func limitedUseToken(completion: @escaping AppCheckCore::AppCheckCoreTokenHandler)
+  @objc deinit
+}
+public protocol AppCheckCoreAPIServiceProtocol : ObjectiveC::NSObjectProtocol {
+  var baseURL: Swift::String { get }
+  func sendRequest(withURL requestURL: Foundation::URL, httpMethod: Swift::String, body: Foundation::Data?, additionalHeaders: [Swift::String : Swift::String]?) async throws -> AppCheckCore::AppCheckCoreURLSessionDataResponse
+  func appCheckToken(withAPIResponse response: AppCheckCore::AppCheckCoreURLSessionDataResponse) throws -> AppCheckCore::AppCheckCoreToken
+}
+@objc(_GACAppCheckAPIService) public class AppCheckCoreAPIService : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreAPIServiceProtocol {
+  final public let baseURL: Swift::String
+  @objc(initWithURLSession:baseURL:APIKey:requestHooks:) convenience public init(urlSession: Foundation::URLSession, baseURL: Swift::String?, apiKey: Swift::String?, requestHooks: [Any]?)
+  public init(urlSession: Foundation::URLSession, baseURL: Swift::String?, apiKey: Swift::String?, requestHooks: [Any]?, environment: [Swift::String : Swift::String])
+  @objc public func sendRequest(withURL requestURL: Foundation::URL, httpMethod: Swift::String, body: Foundation::Data?, additionalHeaders: [Swift::String : Swift::String]?) async throws -> AppCheckCore::AppCheckCoreURLSessionDataResponse
+  public func appCheckToken(withAPIResponse response: AppCheckCore::AppCheckCoreURLSessionDataResponse) throws -> AppCheckCore::AppCheckCoreToken
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @available(iOS 14.0, macOS 11.0, tvOS 15.0, watchOS 9.0, *)
+@objc(GACAppAttestProvider) public class AppCheckCoreAppAttestProvider : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreProvider {
+  @available(*, unavailable)
+  @objc override dynamic public init()
+  @objc(initWithServiceName:resourceName:baseURL:APIKey:keychainAccessGroup:requestHooks:) convenience public init(serviceName: Swift::String, resourceName: Swift::String, baseURL: Swift::String?, apiKey: Swift::String?, keychainAccessGroup accessGroup: Swift::String?, requestHooks: [Any]?)
+  @objc(getTokenWithCompletion:) public func getToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc(getLimitedUseTokenWithCompletion:) public func getLimitedUseToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  public func getToken() async throws -> AppCheckCore::AppCheckCoreToken
+  public func getLimitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+  @objc deinit
+}
+@objc(GACAppCheckBackoffType) public enum AppCheckCoreBackoffType : Swift::UInt {
+  case none
+  case oneDay
+  case exponential
+  public init?(rawValue: Swift::UInt)
+  public typealias RawValue = Swift::UInt
+  public var rawValue: Swift::UInt {
+    get
+  }
+}
+public typealias AppCheckCoreBackoffErrorHandler = (any Swift::Error) -> AppCheckCore::AppCheckCoreBackoffType
+public typealias AppCheckCoreDateProvider = () -> Foundation::Date
+public protocol AppCheckCoreBackoffWrapperProtocol : ObjectiveC::NSObjectProtocol {
+  func applyBackoffToOperation<T>(_ operationProvider: @escaping () async throws -> T, errorHandler: @escaping (any Swift::Error) -> AppCheckCore::AppCheckCoreBackoffType) async throws -> T
+  func defaultAppCheckProviderErrorHandler() -> (any Swift::Error) -> AppCheckCore::AppCheckCoreBackoffType
+}
+@_inheritsConvenienceInitializers @objc(_GACAppCheckBackoffWrapper) public class AppCheckCoreBackoffWrapper : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreBackoffWrapperProtocol {
+  @objc override convenience dynamic public init()
+  @objc(initWithDateProvider:) public init(dateProvider: @escaping AppCheckCore::AppCheckCoreDateProvider)
+  @objc public static func currentDateProvider() -> AppCheckCore::AppCheckCoreDateProvider
+  public func applyBackoffToOperation<T>(_ operationProvider: @escaping () async throws -> T, errorHandler: @escaping (any Swift::Error) -> AppCheckCore::AppCheckCoreBackoffType) async throws -> T
+  @objc public func defaultAppCheckProviderErrorHandler() -> (any Swift::Error) -> AppCheckCore::AppCheckCoreBackoffType
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(GACAppCheckCryptoUtils) public class AppCheckCoreCryptoUtils : ObjectiveC::NSObject {
+  @objc(sha256HashFromData:) public static func sha256Hash(from dataToHash: Foundation::Data) -> Foundation::Data
+  @objc override dynamic public init()
+  @objc deinit
+}
+#if compiler(>=5.3) && $NonexhaustiveAttribute
+@nonexhaustive @objc(GACAppCheckDebugTokenSource) public enum AppCheckCoreDebugTokenSource : Swift::Int, Swift::Sendable {
+  case local = 0
+  case environmentVariable = 1
+  case provided = 2
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+#else
+@objc(GACAppCheckDebugTokenSource) public enum AppCheckCoreDebugTokenSource : Swift::Int, Swift::Sendable {
+  case local = 0
+  case environmentVariable = 1
+  case provided = 2
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+#endif
+@_hasMissingDesignatedInitializers @objc(GACAppCheckDebugProvider) public class AppCheckCoreDebugProvider : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreProvider {
+  @objc final public let debugTokenSource: AppCheckCore::AppCheckCoreDebugTokenSource
+  @objc(initWithServiceName:resourceName:baseURL:APIKey:requestHooks:) convenience public init(serviceName: Swift::String, resourceName: Swift::String, baseURL: Swift::String?, apiKey: Swift::String, requestHooks: [Any]?)
+  @objc(initWithServiceName:resourceName:baseURL:APIKey:requestHooks:debugToken:) convenience public init(serviceName: Swift::String, resourceName: Swift::String, baseURL: Swift::String?, apiKey: Swift::String, requestHooks: [Any]?, debugToken: Swift::String?)
+  @objc public func localDebugToken() -> Swift::String
+  @objc public func currentDebugToken() -> Swift::String
+  public func getToken() async throws -> AppCheckCore::AppCheckCoreToken
+  public func getLimitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+  @objc(getTokenWithCompletion:) public func getToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc(getLimitedUseTokenWithCompletion:) public func getLimitedUseToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @available(iOS 11.0, macOS 10.15, macCatalyst 13.0, tvOS 11.0, watchOS 9.0, *)
+@objc(GACDeviceCheckProvider) public class AppCheckCoreDeviceCheckProvider : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreProvider {
+  @objc(initWithServiceName:resourceName:APIKey:requestHooks:) public init(serviceName: Swift::String, resourceName: Swift::String, apiKey: Swift::String, requestHooks: [Any]?)
+  public func getToken() async throws -> AppCheckCore::AppCheckCoreToken
+  public func getLimitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+  @objc public func getToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc public func getLimitedUseToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc deinit
+}
+@objc(GACDeviceCheckTokenGenerator) public protocol AppCheckCoreDeviceCheckTokenGenerator : ObjectiveC::NSObjectProtocol {
+  @objc var isSupported: Swift::Bool { get }
+  @objc(generateTokenWithCompletionHandler:) func generateToken(completionHandler: @escaping @Sendable (Foundation::Data?, (any Swift::Error)?) -> Swift::Void)
+}
+public let AppCheckCoreErrorDomain: Swift::String
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(GACAppCheckErrors) final public class AppCheckCoreErrorsObjC : ObjectiveC::NSObject {
+  @objc public static var errorDomain: Swift::String {
+    @objc get
+  }
+  @objc deinit
+}
+@objc(GACAppCheckErrorCode) public enum AppCheckCoreErrorCode : Swift::Int, Swift::Error {
+  case unknown = 0
+  case serverUnreachable = 1
+  case invalidConfiguration = 2
+  case keychain = 3
+  case unsupported = 4
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public static var _nsErrorDomain: Swift::String {
+    get
+  }
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+extension AppCheckCore::AppCheckCoreErrorCode : Foundation::CustomNSError {
+  public static var errorDomain: Swift::String {
+    get
+  }
+}
+extension AppCheckCore::AppCheckCoreErrorCode : Foundation::_ObjectiveCBridgeableError {
+  public init?(_bridgedNSError error: Foundation::NSError)
+}
+@objc(GACAppCheckMessageCode) public enum AppCheckCoreMessageCode : Swift::Int {
+  case unknown = 1001
+  case providerIsMissing = 2002
+  case stagingModeEnabled = 2003
+  case unexpectedHTTPCode = 3001
+  case invalidRequestHook = 3002
+  case localDebugToken = 4001
+  case environmentVariableDebugToken = 4002
+  case debugProviderFirebaseEnvironmentVariable = 4003
+  case debugProviderFailedExchange = 4004
+  case providedDebugToken = 4005
+  case appAttestNotSupported = 7001
+  case attestationRejected = 7002
+  case assertionRejected = 7003
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+public let kAppCheckCoreMissingRecaptchaSDKMessage: Swift::String
+public func AppCheckCoreSetErrorToPointer(_ error: any Swift::Error, _ pointer: Foundation::NSErrorPointer)
+@_inheritsConvenienceInitializers @objc(_GACAppCheckErrorUtil) public class AppCheckCoreErrorUtil : ObjectiveC::NSObject {
+  @objc public static func publicDomainError(with error: any Swift::Error) -> any Swift::Error
+  @objc public static func cachedTokenNotFound() -> any Swift::Error
+  @objc public static func cachedTokenExpired() -> any Swift::Error
+  @objc public static func keychainError(with error: any Swift::Error) -> any Swift::Error
+  @objc public static func apiError(with httpResponse: Foundation::HTTPURLResponse, data: Foundation::Data?) -> AppCheckCore::AppCheckCoreHTTPError
+  @objc public static func apiError(withNetworkError networkError: any Swift::Error) -> any Swift::Error
+  @objc public static func appCheckTokenResponseError(withMissingField fieldName: Swift::String) -> any Swift::Error
+  @objc public static func appAttestAttestationResponseError(withMissingField fieldName: Swift::String) -> any Swift::Error
+  @objc public static func jsonSerializationError(_ error: (any Swift::Error)?) -> any Swift::Error
+  @objc public static func error(withFailureReason failureReason: Swift::String) -> any Swift::Error
+  @objc public static func unsupportedAttestationProvider(_ providerName: Swift::String) -> any Swift::Error
+  @objc public static func missingRecaptchaSDKError() -> any Swift::Error
+  @objc public static func appAttestKeyIDNotFound() -> any Swift::Error
+  @objc public static func appAttestGenerateKeyFailed(with error: any Swift::Error) -> any Swift::Error
+  @objc public static func appAttestAttestKeyFailed(with error: any Swift::Error, keyId: Swift::String, clientDataHash: Foundation::Data) -> any Swift::Error
+  @objc public static func appAttestGenerateAssertionFailed(with error: any Swift::Error, keyId: Swift::String, clientDataHash: Foundation::Data) -> any Swift::Error
+  @objc public static func unknownError(with error: any Swift::Error) -> any Swift::Error
+  @objc public static func appCheckError(withCode code: AppCheckCore::AppCheckCoreErrorCode, failureReason: Swift::String?, underlyingError: (any Swift::Error)?) -> any Swift::Error
+  @objc public static func errorDescription(withDeviceCheckError error: Foundation::NSError) -> Swift::String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(GACAppCheckHTTPError) public class AppCheckCoreHTTPError : Foundation::NSError, @unchecked Swift::Sendable {
+  @objc final public let httpResponse: Foundation::HTTPURLResponse
+  @objc final public let data: Foundation::Data
+  @objc(initWithHTTPResponse:data:) public init(httpResponse: Foundation::HTTPURLResponse, data: Foundation::Data?)
+  @available(*, unavailable)
+  @objc required dynamic public init?(coder: Foundation::NSCoder)
+  @objc override dynamic public func copy(with zone: ObjectiveC::NSZone? = nil) -> Any
+  @objc deinit
+}
+@objc(GACAppCheckLogLevel) public enum AppCheckCoreLogLevel : Swift::Int {
+  case debug = 1
+  case info = 2
+  case warning = 3
+  case error = 4
+  case fault = 5
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+@_inheritsConvenienceInitializers @objc(GACAppCheckLogger) public class AppCheckCoreLogger : ObjectiveC::NSObject {
+  @objc public static var logLevel: AppCheckCore::AppCheckCoreLogLevel {
+    @objc get
+    @objc set
+  }
+  public static func log(code: AppCheckCore::AppCheckCoreMessageCode, logLevel: AppCheckCore::AppCheckCoreLogLevel, message: Swift::String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public typealias AppCheckCoreAPIRequestHook = @convention(block) (Foundation::NSMutableURLRequest) -> Swift::Void
+@objc(GACAppCheckProvider) public protocol AppCheckCoreProvider : ObjectiveC::NSObjectProtocol {
+  @objc(getTokenWithCompletion:) func getToken(completion: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc(getLimitedUseTokenWithCompletion:) func getLimitedUseToken(completion: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+}
+extension AppCheckCore::AppCheckCoreProvider {
+  public func getToken() async throws -> AppCheckCore::AppCheckCoreToken
+  public func getLimitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+}
+@objc(GACAppCheckSettingsProtocol) public protocol AppCheckCoreSettingsProtocol : ObjectiveC::NSObjectProtocol {
+  @objc var isTokenAutoRefreshEnabled: Swift::Bool { get set }
+}
+@_inheritsConvenienceInitializers @objc(GACAppCheckSettings) open class AppCheckCoreSettings : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreSettingsProtocol {
+  @objc open var isTokenAutoRefreshEnabled: Swift::Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(GACAppCheckToken) public class AppCheckCoreToken : ObjectiveC::NSObject, @unchecked Swift::Sendable {
+  @objc final public let token: Swift::String
+  @objc final public let expirationDate: Foundation::Date
+  @objc final public let receivedAtDate: Foundation::Date
+  @objc(initWithToken:expirationDate:receivedAtDate:) public init(token: Swift::String, expirationDate: Foundation::Date, receivedAt receivedAtDate: Foundation::Date)
+  @objc(initWithToken:expirationDate:) convenience public init(token: Swift::String, expirationDate: Foundation::Date)
+  @objc deinit
+}
+@objc(GACAppCheckTokenDelegate) public protocol AppCheckCoreTokenDelegate : ObjectiveC::NSObjectProtocol {
+  @objc(tokenDidUpdate:serviceName:) func tokenDidUpdate(_ token: AppCheckCore::AppCheckCoreToken, serviceName: Swift::String)
+}
+@objc(GACAppCheckTokenResult) final public class AppCheckCoreTokenResult : ObjectiveC::NSObject, @unchecked Swift::Sendable {
+  @objc final public let token: AppCheckCore::AppCheckCoreToken
+  @objc final public let error: (any Swift::Error)?
+  @objc(initWithToken:error:) public init(token: AppCheckCore::AppCheckCoreToken, error: (any Swift::Error)?)
+  @objc(initWithToken:) convenience public init(token: AppCheckCore::AppCheckCoreToken)
+  @objc(initWithError:) convenience public init(error: any Swift::Error)
+  public static func placeholderToken() -> AppCheckCore::AppCheckCoreToken
+  @objc deinit
+}
+@objc(_GACURLSessionDataResponse) public class AppCheckCoreURLSessionDataResponse : ObjectiveC::NSObject {
+  final public let httpResponse: Foundation::HTTPURLResponse
+  final public let httpBody: Foundation::Data?
+  final public let requestDate: Foundation::Date
+  public init(response: Foundation::HTTPURLResponse, httpBody: Foundation::Data?, requestDate: Foundation::Date)
+  convenience public init(response: Foundation::HTTPURLResponse, httpBody: Foundation::Data?)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @available(iOS 15.0, visionOS 1.0, *)
+@available(macOS, unavailable)
+@available(macCatalyst, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@objc(GACRecaptchaProvider) final public class AppCheckRecaptchaProvider : ObjectiveC::NSObject, AppCheckCore::AppCheckCoreProvider {
+  @objc public static func isSupported() -> Swift::Bool
+  @objc convenience public init?(siteKey: Swift::String, resourceName: Swift::String, APIKey: Swift::String, requestHooks: [Any]? = nil)
+  @objc convenience public init?(siteKey: Swift::String, resourceName: Swift::String, APIKey: Swift::String, requestHooks: [Any]? = nil, actionName: Swift::String)
+  final public func getToken() async throws -> AppCheckCore::AppCheckCoreToken
+  final public func getLimitedUseToken() async throws -> AppCheckCore::AppCheckCoreToken
+  @objc(getTokenWithCompletion:) final public func getToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc(getLimitedUseTokenWithCompletion:) final public func getLimitedUseToken(completion handler: @escaping (AppCheckCore::AppCheckCoreToken?, (any Swift::Error)?) -> Swift::Void)
+  @objc deinit
+}
+@available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *)
+extension DeviceCheck::DCDevice : AppCheckCore::AppCheckCoreDeviceCheckTokenGenerator {
+}
+@_hasMissingDesignatedInitializers final public class SafeContinuation<T, E> : @unchecked Swift::Sendable where T : Swift::Sendable, E : Swift::Error {
+  final public func resume(returning value: T)
+  final public func resume(throwing error: E)
+  @objc deinit
+}
+public func withSafeCheckedThrowingContinuation<T>(_ body: (AppCheckCore::SafeContinuation<T, any Swift::Error>) -> Swift::Void) async throws -> T where T : Swift::Sendable
+extension AppCheckCore::AppCheckCoreBackoffType : Swift::Equatable {}
+extension AppCheckCore::AppCheckCoreBackoffType : Swift::Hashable {}
+extension AppCheckCore::AppCheckCoreBackoffType : Swift::RawRepresentable {}
+extension AppCheckCore::AppCheckCoreDebugTokenSource : Swift::Equatable {}
+extension AppCheckCore::AppCheckCoreDebugTokenSource : Swift::Hashable {}
+extension AppCheckCore::AppCheckCoreDebugTokenSource : Swift::RawRepresentable {}
+extension AppCheckCore::AppCheckCoreErrorCode : Swift::Equatable {}
+extension AppCheckCore::AppCheckCoreErrorCode : Swift::Hashable {}
+extension AppCheckCore::AppCheckCoreErrorCode : Swift::RawRepresentable {}
+extension AppCheckCore::AppCheckCoreMessageCode : Swift::Equatable {}
+extension AppCheckCore::AppCheckCoreMessageCode : Swift::Hashable {}
+extension AppCheckCore::AppCheckCoreMessageCode : Swift::RawRepresentable {}
+extension AppCheckCore::AppCheckCoreLogLevel : Swift::Equatable {}
+extension AppCheckCore::AppCheckCoreLogLevel : Swift::Hashable {}
+extension AppCheckCore::AppCheckCoreLogLevel : Swift::RawRepresentable {}

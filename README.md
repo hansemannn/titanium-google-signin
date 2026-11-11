@@ -19,6 +19,13 @@ Ti.GoogleSignIn is an open-source project to support the Google SignIn SDK in Ap
 
 #### iOS Setup
 
+The iOS module bundles the Google Sign-In SDK 10.1.0 (with its dependencies and their privacy manifests) and requires
+iOS 15 or later, so set `<min-ios-ver>15.0</min-ios-ver>` in the `<ios>` section of your tiapp.xml.
+
+If your app also uses a module that bundles some of the same frameworks (for example `GoogleUtilities.xcframework` in
+Ti.Firebase.Core or `GTMSessionFetcher.xcframework` in Ti.Firebase.Auth), the build stops with "Duplicate framework".
+Keep one copy: delete the duplicate `.xcframework` from one module's `platform` folder.
+
 Add the following URL types to your plist section of the tiapp.xml:
 ```xml
 <key>CFBundleURLTypes</key>
@@ -95,7 +102,9 @@ GoogleSignIn.initialize({
 ```
 #### Methods
 
-- [x] `signIn()`
+- [x] `signIn(params)`
+    * `nonce` (String, optional): included unchanged in the `nonce` claim of the returned ID token, so your
+      server can check that the token was issued for this sign-in (iOS 8.1.0+; Android since 8.0.0)
 - [x] `signInSilently()`
 - [x] `signOut()`
 - [x] `disconnect()`
@@ -170,6 +179,7 @@ The login event also includes the current user via the `user` property.
 
 If you want to build the module from the source, you need to check some things beforehand:
 - Set the `TITANIUM_SDK_VERSION` inside the `ios/titanium.xcconfig` file to the Ti.SDK version you want to build with.
+- To update the bundled Google Sign-In SDK, run `ios/update-google-signin-sdk.sh [version]` (needs CocoaPods and XcodeGen): it rebuilds `ios/platform` and the resource bundles in `ios/Resources`.
 - Build the project with `appc run -p ios --build-only`
 - Check the [releases tab](https://github.com/hansemannn/titanium-google-signin/releases) for stable pre-packaged versions of the module
 
