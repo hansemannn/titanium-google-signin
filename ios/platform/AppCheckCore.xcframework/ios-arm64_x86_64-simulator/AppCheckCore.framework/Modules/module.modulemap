@@ -1,0 +1,10 @@
+framework module AppCheckCore {
+  umbrella header "AppCheckCore-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module AppCheckCore.Swift {
+  header "AppCheckCore-Swift.h"
+}

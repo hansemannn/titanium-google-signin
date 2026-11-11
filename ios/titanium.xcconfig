@@ -4,11 +4,14 @@
 // OF YOUR TITANIUM SDK YOU'RE BUILDING FOR
 //
 //
-TITANIUM_SDK_VERSION = 12.0.0.GA
+TITANIUM_SDK_VERSION = 13.4.1.GA
 
 //
 // THESE SHOULD BE OK GENERALLY AS-IS
 //
 TITANIUM_SDK = /Users/$(USER)/Library/Application Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)
 HEADER_SEARCH_PATHS = $(inherited) "$(TITANIUM_SDK)/iphone/include"
-FRAMEWORK_SEARCH_PATHS = $(inherited) "$(TITANIUM_SDK)/iphone/Frameworks/**"
+// Point at the matching TitaniumKit slice: a recursive search finds the device slice first, which breaks simulator builds
+FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) "$(TITANIUM_SDK)/iphone/Frameworks/TitaniumKit.xcframework/ios-arm64"
+FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*] = $(inherited) "$(TITANIUM_SDK)/iphone/Frameworks/TitaniumKit.xcframework/ios-arm64_x86_64-simulator"
+FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(inherited) "$(TITANIUM_SDK)/iphone/Frameworks/TitaniumKit.xcframework/ios-arm64_x86_64-maccatalyst"

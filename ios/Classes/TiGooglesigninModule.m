@@ -57,6 +57,15 @@
 
   // These are actually used in "signIn()" now, but we keep it here for backwards compatibility with Android
   signInConfig = args;
+
+  // Restoring a previous sign-in also needs the configuration
+  id clientID = [signInConfig objectForKey:@"clientID"];
+  if ([clientID isKindOfClass:[NSString class]]) {
+    [[GIDSignIn sharedInstance] setConfiguration:[[GIDConfiguration alloc] initWithClientID:clientID
+                                                                             serverClientID:[signInConfig objectForKey:@"serverClientID"]
+                                                                               hostedDomain:[signInConfig objectForKey:@"hostedDomain"]
+                                                                                openIDRealm:[signInConfig objectForKey:@"openIDRealm"]]];
+  }
 }
 
 - (void)signIn:(id)unused
@@ -99,20 +108,20 @@
         DEPRECATED_REMOVED(@"GoogleSignIn.shouldFetchBasicProfile (removed by Google)", @"5.0.0", @"5.0.0");
     }
 
-    [[GIDSignIn sharedInstance] signInWithConfiguration:config
-                             presentingViewController:TiApp.app.controller.topPresentedController
-                                                   hint:loginHint
-                                     additionalScopes:scopes
-                                             callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        [self fireLoginEventWithUser:user andError:error];
+    [[GIDSignIn sharedInstance] setConfiguration:config];
+    [[GIDSignIn sharedInstance] signInWithPresentingViewController:TiApp.app.controller.topPresentedController
+                                                              hint:loginHint
+                                                  additionalScopes:scopes
+                                                        completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+        [self fireLoginEventWithUser:signInResult.user serverAuthCode:signInResult.serverAuthCode andError:error];
     }];
 }
 
 - (void)signInSilently:(id)unused
 {
   ENSURE_UI_THREAD(signInSilently, unused);
-    [[GIDSignIn sharedInstance] restorePreviousSignInWithCallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        [self fireLoginEventWithUser:user andError:error];
+    [[GIDSignIn sharedInstance] restorePreviousSignInWithCompletion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        [self fireLoginEventWithUser:user serverAuthCode:nil andError:error];
     }];
 }
 
@@ -125,7 +134,7 @@
 - (void)disconnect:(id)unused
 {
     ENSURE_UI_THREAD(disconnect, unused);
-    [[GIDSignIn sharedInstance] disconnectWithCallback:^(NSError * _Nullable error) {
+    [[GIDSignIn sharedInstance] disconnectWithCompletion:^(NSError * _Nullable error) {
         if ([self _hasListeners:@"logout"]) {
             [self fireEvent:@"logout" withObject:@{ @"success": @(error == nil), @"error": NULL_IF_NIL(error.localizedDescription) }];
         }
@@ -140,7 +149,7 @@
 - (NSDictionary *)currentUser
 {
   ENSURE_LOGGED_IN
-  return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser]];
+  return [TiGooglesigninModule dictionaryFromUser:[[GIDSignIn sharedInstance] currentUser] serverAuthCode:nil];
 }
 
 - (NSString *)currentUserImageURLWithSize:(id)size
@@ -164,7 +173,7 @@
 
 #pragma mark Utilities
 
-- (void)fireLoginEventWithUser:(GIDGoogleUser *)user andError:(NSError *)error
+- (void)fireLoginEventWithUser:(GIDGoogleUser *)user serverAuthCode:(NSString *)serverAuthCode andError:(NSError *)error
 {
     if ([self _hasListeners:@"login"]) {
       if (error != nil) {
@@ -181,17 +190,17 @@
         return;
       }
 
-      [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user] }];
+      [self fireEvent:@"login" withObject:@{ @"success": @(YES), @"cancelled": @(NO), @"user" : [TiGooglesigninModule dictionaryFromUser:user serverAuthCode:serverAuthCode] }];
     }
 }
 
-+ (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user
++ (NSDictionary *)dictionaryFromUser:(GIDGoogleUser *)user serverAuthCode:(NSString *)serverAuthCode
 {
   return @{
     @"id" : user.userID,
     @"scopes" : NULL_IF_NIL(user.grantedScopes),
-    @"serverAuthCode" : NULL_IF_NIL(user.serverAuthCode),
-    @"hostedDomain" : NULL_IF_NIL(user.hostedDomain),
+    @"serverAuthCode" : NULL_IF_NIL(serverAuthCode),
+    @"hostedDomain" : NULL_IF_NIL(user.configuration.hostedDomain),
     @"profile" : @{
       @"name" : NULL_IF_NIL(user.profile.name),
       @"givenName" : NULL_IF_NIL(user.profile.givenName),
@@ -200,12 +209,12 @@
       @"hasImage" : @(user.profile.hasImage)
     },
     @"authentication" : @{
-      @"clientID" : NULL_IF_NIL(user.authentication.clientID),
-      @"accessToken" : NULL_IF_NIL(user.authentication.accessToken),
-      @"accessTokenExpirationDate" : NULL_IF_NIL(user.authentication.accessTokenExpirationDate),
-      @"refreshToken" : NULL_IF_NIL(user.authentication.refreshToken),
-      @"idToken" : NULL_IF_NIL(user.authentication.idToken),
-      @"idTokenExpirationDate" : NULL_IF_NIL(user.authentication.idTokenExpirationDate)
+      @"clientID" : NULL_IF_NIL(user.configuration.clientID),
+      @"accessToken" : NULL_IF_NIL(user.accessToken.tokenString),
+      @"accessTokenExpirationDate" : NULL_IF_NIL(user.accessToken.expirationDate),
+      @"refreshToken" : NULL_IF_NIL(user.refreshToken.tokenString),
+      @"idToken" : NULL_IF_NIL(user.idToken.tokenString),
+      @"idTokenExpirationDate" : NULL_IF_NIL(user.idToken.expirationDate)
     }
   };
 }

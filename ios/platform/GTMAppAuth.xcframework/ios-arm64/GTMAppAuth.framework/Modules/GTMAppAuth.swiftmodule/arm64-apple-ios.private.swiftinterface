@@ -1,0 +1,178 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.4 effective-5.10 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name GTMAppAuth
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4
+import AppAuth
+import Foundation
+@_exported import GTMAppAuth
+import GTMSessionFetcher
+import Security
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@objc(GTMAuthSession) final public class AuthSession : ObjectiveC::NSObject, GTMSessionFetcher::GTMSessionFetcherAuthorizer, Foundation::NSSecureCoding {
+  @objc final public let authState: AppAuth::OIDAuthState
+  @objc final public let serviceProvider: Swift::String?
+  @objc final public let userID: Swift::String?
+  @objc final public let userEmail: Swift::String?
+  @objc final public var userEmailIsVerified: Swift::Bool {
+    @objc get
+  }
+  @objc final public var shouldAuthorizeAllRequests: Swift::Bool
+  @objc weak final public var delegate: (any GTMAppAuth::AuthSessionDelegate)?
+  @objc weak final public var fetcherService: (any GTMSessionFetcher::GTMSessionFetcherServiceProtocol)?
+  @objc(initWithAuthState:) convenience public init(authState: AppAuth::OIDAuthState)
+  @objc public init(authState: AppAuth::OIDAuthState, serviceProvider: Swift::String? = nil, userID: Swift::String? = nil, userEmail: Swift::String? = nil, userEmailIsVerified: Swift::String? = nil)
+  @objc public static let supportsSecureCoding: Swift::Bool
+  @objc final public func encode(with coder: Foundation::NSCoder)
+  @objc required convenience public init?(coder: Foundation::NSCoder)
+  @objc(authorizeRequest:completionHandler:) final public func authorizeRequest(_ request: Foundation::NSMutableURLRequest?, completionHandler handler: @escaping ((any Swift::Error)?) -> Swift::Void)
+  @objc(authorizeRequest:delegate:didFinishSelector:) final public func authorizeRequest(_ request: Foundation::NSMutableURLRequest?, delegate: Any, didFinish selector: ObjectiveC::Selector)
+  @objc final public func stopAuthorization()
+  @objc final public func stopAuthorization(for request: Foundation::URLRequest)
+  @objc final public func isAuthorizingRequest(_ request: Foundation::URLRequest) -> Swift::Bool
+  @objc final public func isAuthorizedRequest(_ request: Foundation::URLRequest) -> Swift::Bool
+  @objc final public var canAuthorize: Swift::Bool {
+    @objc get
+  }
+  @objc final public func primeForRefresh() -> Swift::Bool
+  @objc public static func configurationForGoogle() -> AppAuth::OIDServiceConfiguration
+  @objc deinit
+}
+extension GTMAppAuth::AuthSession {
+  public static let authStateKey: Swift::String
+  public static let serviceProviderKey: Swift::String
+  public static let userIDKey: Swift::String
+  public static let userEmailKey: Swift::String
+  public static let userEmailIsVerifiedKey: Swift::String
+  public enum Error : Swift::Error, Swift::Equatable, Foundation::CustomNSError {
+    case cannotAuthorizeRequest(Foundation::URLRequest)
+    case accessTokenEmptyForRequest(Foundation::URLRequest)
+    public static let errorDomain: Swift::String
+    public var errorUserInfo: [Swift::String : Any] {
+      get
+    }
+    public var errorCode: Swift::Int {
+      get
+    }
+    public static func == (a: GTMAppAuth::AuthSession.GTMAppAuth::Error, b: GTMAppAuth::AuthSession.GTMAppAuth::Error) -> Swift::Bool
+  }
+  @objc(GTMAuthSessionErrorCode) public enum ErrorCode : Swift::Int {
+    case cannotAuthorizeRequest
+    case accessTokenEmptyForRequest
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+}
+@objc(GTMAuthSessionDelegate) public protocol AuthSessionDelegate {
+  @objc optional func additionalTokenRefreshParameters(forAuthSession authSession: GTMAppAuth::AuthSession) -> [Swift::String : Swift::String]?
+  @objc optional func updateError(forAuthSession authSession: GTMAppAuth::AuthSession, originalError: any Swift::Error, completion: @escaping ((any Swift::Error)?) -> Swift::Void)
+}
+@objc(GTMAuthSessionStore) public protocol AuthSessionStore {
+  @objc(saveAuthSession:error:) func save(authSession: GTMAppAuth::AuthSession) throws
+  @objc(removeAuthSessionWithError:) func removeAuthSession() throws
+  @objc(retrieveAuthSessionWithError:) func retrieveAuthSession() throws -> GTMAppAuth::AuthSession
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(GTMOAuth2Compatibility) final public class GTMOAuth2Compatibility : ObjectiveC::NSObject {
+  @objc(persistenceResponseStringForAuthSession:) public static func persistenceResponseString(forAuthSession authSession: GTMAppAuth::AuthSession) -> Swift::String?
+  @objc public static func authSession(forPersistenceString persistenceString: Swift::String, tokenURL: Foundation::URL, redirectURI: Swift::String, clientID: Swift::String, clientSecret: Swift::String?) throws -> GTMAppAuth::AuthSession
+  @objc deinit
+}
+@objc(GTMKeychainAttribute) final public class KeychainAttribute : ObjectiveC::NSObject, Swift::Sendable {
+  public enum Attribute : Swift::Sendable {
+    case useFileBasedKeychain
+    case accessGroup(Swift::String)
+    public var keyName: Swift::String {
+      get
+    }
+  }
+  final public let attribute: GTMAppAuth::KeychainAttribute.GTMAppAuth::Attribute
+  public init(attribute: GTMAppAuth::KeychainAttribute.GTMAppAuth::Attribute)
+  @objc public static let useFileBasedKeychain: GTMAppAuth::KeychainAttribute
+  @objc public static func keychainAccessGroup(name: Swift::String) -> GTMAppAuth::KeychainAttribute
+  @objc deinit
+}
+@objc(GTMKeychainHelper) public protocol KeychainHelper {
+  @objc var accountName: Swift::String { get }
+  @objc var keychainAttributes: Swift::Set<GTMAppAuth::KeychainAttribute> { get }
+  @objc init(keychainAttributes: Swift::Set<GTMAppAuth::KeychainAttribute>)
+  @objc func keychainQuery(forService service: Swift::String) -> [Swift::String : Any]
+  @objc func password(forService service: Swift::String) throws -> Swift::String
+  @objc func passwordData(forService service: Swift::String) throws -> Foundation::Data
+  @objc func removePassword(forService service: Swift::String) throws
+  @objc func setPassword(_ password: Swift::String, forService service: Swift::String) throws
+  @objc func setPassword(_ password: Swift::String, forService service: Swift::String, accessibility: CoreFoundation::CFTypeRef) throws
+  @objc func setPassword(data: Foundation::Data, forService service: Swift::String, accessibility: CoreFoundation::CFTypeRef?) throws
+}
+@objc(GTMKeychainStore) final public class KeychainStore : ObjectiveC::NSObject, GTMAppAuth::AuthSessionStore {
+  @objc final public let keychainHelper: any GTMAppAuth::KeychainHelper
+  @objc final public var itemName: Swift::String
+  @objc final public var keychainAttributes: Swift::Set<GTMAppAuth::KeychainAttribute>
+  @objc convenience public init(itemName: Swift::String, keychainAttributes: Swift::Set<GTMAppAuth::KeychainAttribute>)
+  @objc convenience public init(itemName: Swift::String, keychainHelper: any GTMAppAuth::KeychainHelper)
+  @objc public init(itemName: Swift::String, keychainAttributes: Swift::Set<GTMAppAuth::KeychainAttribute>, keychainHelper: any GTMAppAuth::KeychainHelper)
+  @objc convenience public init(itemName: Swift::String)
+  @objc(saveAuthSession:error:) final public func save(authSession: GTMAppAuth::AuthSession) throws
+  @objc(saveAuthSession:withItemName:error:) final public func save(authSession: GTMAppAuth::AuthSession, withItemName itemName: Swift::String) throws
+  @objc final public func removeAuthSession(withItemName itemName: Swift::String) throws
+  @objc final public func removeAuthSession() throws
+  @objc final public func retrieveAuthSession(withItemName itemName: Swift::String) throws -> GTMAppAuth::AuthSession
+  @objc final public func retrieveAuthSession() throws -> GTMAppAuth::AuthSession
+  @objc final public func retrieveAuthSessionInGTMOAuth2Format(tokenURL: Foundation::URL, redirectURI: Swift::String, clientID: Swift::String, clientSecret: Swift::String?) throws -> GTMAppAuth::AuthSession
+  @objc final public func retrieveAuthSessionForGoogleInGTMOAuth2Format(clientID: Swift::String, clientSecret: Swift::String) throws -> GTMAppAuth::AuthSession
+  @objc final public func saveWithGTMOAuth2Format(forAuthSession authSession: GTMAppAuth::AuthSession) throws
+  @objc deinit
+}
+extension GTMAppAuth::KeychainStore {
+  public enum Error : Swift::Error, Swift::Equatable, Foundation::CustomNSError {
+    case unhandled(status: Darwin::OSStatus)
+    case passwordNotFound(forItemName: Swift::String)
+    case noService
+    case unexpectedPasswordData(forItemName: Swift::String)
+    case failedToCreateResponseStringFromAuthSession(GTMAppAuth::AuthSession)
+    case failedToConvertRedirectURItoURL(Swift::String)
+    case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession(itemName: Swift::String)
+    case failedToDeletePassword(forItemName: Swift::String)
+    case failedToDeletePasswordBecauseItemNotFound(itemName: Swift::String)
+    case failedToSetPassword(forItemName: Swift::String)
+    public static var errorDomain: Swift::String {
+      get
+    }
+    public var errorUserInfo: [Swift::String : Any] {
+      get
+    }
+    public var errorCode: Swift::Int {
+      get
+    }
+    public static func == (a: GTMAppAuth::KeychainStore.GTMAppAuth::Error, b: GTMAppAuth::KeychainStore.GTMAppAuth::Error) -> Swift::Bool
+  }
+  @objc(GTMKeychainStoreErrorCode) public enum ErrorCode : Swift::Int {
+    case unhandled
+    case passwordNotFound
+    case noService
+    case unexpectedPasswordData
+    case failedToCreateResponseStringFromAuthSession
+    case failedToConvertRedirectURItoURL
+    case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession
+    case failedToDeletePassword
+    case failedToDeletePasswordBecauseItemNotFound
+    case failedToSetPassword
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+}
+extension GTMAppAuth::AuthSession.GTMAppAuth::ErrorCode : Swift::Equatable {}
+extension GTMAppAuth::AuthSession.GTMAppAuth::ErrorCode : Swift::Hashable {}
+extension GTMAppAuth::AuthSession.GTMAppAuth::ErrorCode : Swift::RawRepresentable {}
+extension GTMAppAuth::KeychainStore.GTMAppAuth::ErrorCode : Swift::Equatable {}
+extension GTMAppAuth::KeychainStore.GTMAppAuth::ErrorCode : Swift::Hashable {}
+extension GTMAppAuth::KeychainStore.GTMAppAuth::ErrorCode : Swift::RawRepresentable {}
